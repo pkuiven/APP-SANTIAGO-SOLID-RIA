@@ -1,0 +1,247 @@
+// SANTIAGO SOLIDÁRIA — protótipo demonstrativo
+// Os dados ficam salvos apenas neste navegador (localStorage).
+// Para várias pessoas usarem em celulares diferentes, será necessário um banco de dados e um servidor.
+
+const STORAGE_PROFILE = "santiagoSolidariaProfile";
+const STORAGE_CALLS = "santiagoSolidariaCalls";
+
+const registerScreen = document.getElementById("registerScreen");
+const appScreen = document.getElementById("appScreen");
+const registerForm = document.getElementById("registerForm");
+const callForm = document.getElementById("callForm");
+const callsList = document.getElementById("callsList");
+const statusFilter = document.getElementById("statusFilter");
+
+let profile = load(STORAGE_PROFILE, null);
+let calls = load(STORAGE_CALLS, []);
+let map;
+let markersLayer;
+
+function load(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_CALLS, JSON.stringify(calls));
+}
+
+function showApp() {
+  registerScreen.classList.add("hidden");
+  appScreen.classList.remove("hidden");
+  document.getElementById("welcomeName").textContent = profile.name.split(" ")[0];
+  document.getElementById("callNeighborhood").value = profile.neighborhood;
+  renderCalls();
+  setTimeout(() => {
+    if (!map) initMap();
+    else map.invalidateSize();
+  }, 100);
+}
+
+function showRegister() {
+  appScreen.classList.add("hidden");
+  registerScreen.classList.remove("hidden");
+  if (profile) {
+    document.getElementById("personName").value = profile.name || "";
+    document.getElementById("street").value = profile.street || "";
+    document.getElementById("neighborhood").value = profile.neighborhood || "";
+    document.getElementById("houseNumber").value = profile.houseNumber || "";
+    document.getElementById("phone").value = profile.phone || "";
+  }
+}
+
+registerForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  profile = {
+    name: document.getElementById("personName").value.trim(),
+    street: document.getElementById("street").value.trim(),
+    neighborhood: document.getElementById("neighborhood").value.trim(),
+    houseNumber: document.getElementById("houseNumber").value.trim(),
+    phone: document.getElementById("phone").value.trim()
+  };
+  localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
+  showApp();
+});
+
+document.getElementById("editProfileBtn").addEventListener("click", showRegister);
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  profile = null;
+  localStorage.removeItem(STORAGE_PROFILE);
+  showRegister();
+});
+
+callForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const category = document.getElementById("callCategory").value;
+  const description = document.getElementById("callDescription").value.trim();
+  const neighborhood = document.getElementById("callNeighborhood").value.trim();
+
+  if (!category || !description || !neighborhood) return;
+
+  calls.unshift({
+    id: Date.now().toString(),
+    category,
+    description,
+    neighborhood,
+    requester: profile.name,
+    status: "open",
+    acceptedBy: "",
+    createdAt: new Date().toLocaleString("pt-BR"),
+    // O mapa usa a região aproximada do bairro; não exibe o número da casa.
+    coordinates: getNeighborhoodPoint(neighborhood)
+  });
+
+  save();
+  callForm.reset();
+  document.getElementById("callNeighborhood").value = profile.neighborhood;
+  renderCalls();
+});
+
+statusFilter.addEventListener("change", renderCalls);
+
+function getNeighborhoodPoint(neighborhood) {
+  // Coordenadas aproximadas de referência para o protótipo.
+  // Ajuste os pontos conforme os bairros reais e confirme as coordenadas antes de publicar.
+  const points = {
+    "centro": [-29.1915, -54.8678],
+    "itu": [-29.1845, -54.8610],
+    "vista alegre": [-29.2020, -54.8780],
+    "lulu genro": [-29.1780, -54.8780],
+    "nei pereira": [-29.2050, -54.8580],
+    "ana bonato": [-29.1740, -54.8550]
+  };
+  const key = neighborhood.trim().toLocaleLowerCase("pt-BR");
+  if (points[key]) return points[key];
+  // Pequena variação em torno do centro para bairros não cadastrados.
+  const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return [-29.1915 + ((seed % 11) - 5) * 0.0018, -54.8678 + ((seed % 13) - 6) * 0.0018];
+}
+
+function initMap() {
+  map = L.map("map").setView([-29.1915, -54.8678], 13);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  markersLayer = L.layerGroup().addTo(map);
+  renderMarkers();
+}
+
+function renderMarkers() {
+  if (!map || !markersLayer) return;
+  markersLayer.clearLayers();
+
+  calls.filter(call => call.status !== "done").forEach(call => {
+    const marker = L.marker(call.coordinates, {
+      icon: L.divIcon({
+        className: "custom-marker-wrap",
+        html: '<div class="custom-marker">!</div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      })
+    }).addTo(markersLayer);
+
+    const statusText = call.status === "accepted" ? "Em atendimento" : "Chamado aberto";
+    marker.bindPopup(`
+      <div class="popup-content">
+        <strong>${escapeHTML(call.category)}</strong>
+        <p>${escapeHTML(call.description)}</p>
+        <small>${escapeHTML(call.neighborhood)} • ${statusText}</small>
+        <p><button class="popup-button" onclick="acceptCall('${call.id}')">Ver / aceitar chamado</button></p>
+      </div>
+    `);
+  });
+}
+
+function renderCalls() {
+  const filter = statusFilter.value;
+  const visibleCalls = calls.filter(call => filter === "all" || call.status === filter);
+  callsList.innerHTML = "";
+
+  document.getElementById("openCount").textContent = calls.filter(c => c.status === "open").length;
+  document.getElementById("doneCount").textContent = calls.filter(c => c.status === "done").length;
+
+  if (visibleCalls.length === 0) {
+    callsList.innerHTML = '<div class="empty-state">Nenhum chamado nesta categoria ainda.</div>';
+  } else {
+    visibleCalls.forEach(call => {
+      const card = document.createElement("article");
+      card.className = "call-card";
+      const statusLabel = {
+        open: "Aberto",
+        accepted: "Em atendimento",
+        done: "Atendido"
+      }[call.status];
+
+      let action = "";
+      if (call.status === "open") {
+        action = `<button class="accept-btn" onclick="acceptCall('${call.id}')">Aceitar chamado</button>`;
+      } else if (call.status === "accepted") {
+        action = `<p class="accepted-info">Em atendimento por ${escapeHTML(call.acceptedBy)}.</p>
+          ${call.acceptedBy === profile.name ? `<button class="complete-btn" onclick="completeCall('${call.id}')">Marcar como atendido</button>` : ""}`;
+      } else {
+        action = '<p class="completed-info">Este pedido já foi atendido. Obrigado por ajudar!</p>';
+      }
+
+      card.innerHTML = `
+        <div class="call-card-top">
+          <span class="category-tag">${escapeHTML(call.category)}</span>
+          <span class="status status-${call.status}">${statusLabel}</span>
+        </div>
+        <h4>${escapeHTML(call.description)}</h4>
+        <p class="call-meta"><span>📍 ${escapeHTML(call.neighborhood)}</span><span>👤 ${escapeHTML(call.requester)}</span></p>
+        <p class="call-date">${escapeHTML(call.createdAt)}</p>
+        ${action}
+      `;
+      callsList.appendChild(card);
+    });
+  }
+  renderMarkers();
+}
+
+function acceptCall(id) {
+  const call = calls.find(item => item.id === id);
+  if (!call) return;
+  if (call.status === "done") {
+    alert("Este chamado já foi atendido!");
+    return;
+  }
+  if (call.status === "accepted") {
+    alert(`Este chamado já está em atendimento por ${call.acceptedBy}.`);
+    return;
+  }
+  if (call.requester === profile.name) {
+    alert("Você não pode aceitar seu próprio chamado.");
+    return;
+  }
+  call.status = "accepted";
+  call.acceptedBy = profile.name;
+  save();
+  renderCalls();
+  if (map) map.closePopup();
+  alert("Chamado aceito! Combine a ajuda com a pessoa de forma segura.");
+}
+
+function completeCall(id) {
+  const call = calls.find(item => item.id === id);
+  if (!call || call.acceptedBy !== profile.name) return;
+  call.status = "done";
+  save();
+  renderCalls();
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[char]));
+}
+
+if (profile) showApp();
+else showRegister();
+
+// Disponibiliza as ações para os botões criados dinamicamente no HTML.
+window.acceptCall = acceptCall;
+window.completeCall = completeCall;

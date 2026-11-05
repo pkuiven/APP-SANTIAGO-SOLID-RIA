@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santiago Solidária</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark">❤</div>
+    <div>
+      <h1>SANTIAGO SOLIDÁRIA</h1>
+      <p>Pequenas atitudes. Uma cidade mais unida.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="registerScreen" class="panel register-panel">
+      <div class="section-heading">
+        <span class="eyebrow">BEM-VINDO(A)</span>
+        <h2>Faça parte dessa corrente do bem!</h2>
+        <p>Cadastre-se para pedir ajuda ou apoiar alguém de Santiago.</p>
+      </div>
+      <form id="registerForm">
+        <label for="personName">Seu nome</label>
+        <input id="personName" name="personName" maxlength="60" placeholder="Como podemos chamar você?" required>
+
+        <label for="street">Rua</label>
+        <input id="street" name="street" maxlength="100" placeholder="Nome da rua" required>
+
+        <div class="form-grid">
+          <div>
+            <label for="neighborhood">Bairro</label>
+            <input id="neighborhood" name="neighborhood" maxlength="80" placeholder="Seu bairro" required>
+          </div>
+          <div>
+            <label for="houseNumber">Número da casa</label>
+            <input id="houseNumber" name="houseNumber" maxlength="12" placeholder="Nº" required>
+          </div>
+        </div>
+        <label for="phone">Telefone (opcional)</label>
+        <input id="phone" name="phone" type="tel" maxlength="25" placeholder="(55) 99999-9999">
+        <p class="privacy-note">Sua rua e seu número são usados apenas neste protótipo para identificar seu cadastro. Não publique seu endereço completo em chamados.</p>
+        <button class="primary-btn" type="submit">Entrar no aplicativo</button>
+      </form>
+    </section>
+
+    <section id="appScreen" class="hidden">
+      <div class="welcome-row">
+        <div>
+          <span class="eyebrow">COMUNIDADE</span>
+          <h2>Olá, <span id="welcomeName">vizinho(a)</span>!</h2>
+          <p>Veja os pedidos de ajuda e faça a diferença.</p>
+        </div>
+        <button id="editProfileBtn" class="small-btn" type="button">Meu cadastro</button>
+      </div>
+
+      <section class="stats">
+        <article class="stat-card"><span class="stat-number" id="openCount">0</span><span>Chamados abertos</span></article>
+        <article class="stat-card"><span class="stat-number" id="doneCount">0</span><span>Atendidos</span></article>
+      </section>
+
+      <section class="panel new-call-panel">
+        <div>
+          <span class="eyebrow">PRECISA DE AJUDA?</span>
+          <h3>Crie um chamado</h3>
+          <p>Explique brevemente o que está precisando.</p>
+        </div>
+        <form id="callForm">
+          <label for="callCategory">Tipo de ajuda</label>
+          <select id="callCategory" required>
+            <option value="">Selecione uma categoria</option>
+            <option>Alimentos</option>
+            <option>Roupas e cobertores</option>
+            <option>Transporte</option>
+            <option>Ajuda com tarefas</option>
+            <option>Doação de objetos</option>
+            <option>Outra necessidade</option>
+          </select>
+          <label for="callDescription">Descrição do chamado</label>
+          <textarea id="callDescription" rows="3" maxlength="240" placeholder="Conte do que você precisa..." required></textarea>
+          <label for="callNeighborhood">Bairro onde precisa de ajuda</label>
+          <input id="callNeighborhood" maxlength="80" placeholder="Ex.: Centro" required>
+          <button class="primary-btn" type="submit">Publicar chamado</button>
+        </form>
+      </section>
+
+      <section class="map-section">
+        <div class="section-title">
+          <div><span class="eyebrow">SANTIAGO - RS</span><h3>Mapa de chamados</h3></div>
+          <span class="map-key"><i></i> Chamado aberto</span>
+        </div>
+        <p class="map-hint">Selecione um marcador para ver o chamado. Neste protótipo, os pontos são aproximados pelo bairro.</p>
+        <div id="map" aria-label="Mapa de Santiago com chamados"></div>
+      </section>
+
+      <section class="list-section">
+        <div class="section-title">
+          <div><span class="eyebrow">AJUDE QUEM PRECISA</span><h3>Lista de chamados</h3></div>
+          <select id="statusFilter" aria-label="Filtrar chamados">
+            <option value="all">Todos</option>
+            <option value="open">Abertos</option>
+            <option value="accepted">Em atendimento</option>
+            <option value="done">Atendidos</option>
+          </select>
+        </div>
+        <div id="callsList" class="calls-list"></div>
+      </section>
+      <button id="logoutBtn" class="text-btn" type="button">Sair do cadastro</button>
+    </section>
+  </main>
+
+  <footer>Projeto demonstrativo • Santiago, Rio Grande do Sul</footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="java.script"></script>
+</body>
+</html>
