@@ -1,119 +1,277 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Santiago Solidária</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santiago Solidária ❤️</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
+
 <body>
-  <header class="topbar">
-    <div class="brand-mark">❤</div>
+
+<header>
+    <div class="logo">❤️</div>
     <div>
-      <h1>SANTIAGO SOLIDÁRIA</h1>
-      <p>Pequenas atitudes. Uma cidade mais unida.</p>
+        <h1>Santiago Solidária</h1>
+        <p>Uma cidade mais unida.</p>
     </div>
-  </header>
+</header>
 
-  <main class="container">
-    <section id="registerScreen" class="panel register-panel">
-      <div class="section-heading">
-        <span class="eyebrow">BEM-VINDO(A)</span>
-        <h2>Faça parte dessa corrente do bem!</h2>
-        <p>Cadastre-se para pedir ajuda ou apoiar alguém de Santiago.</p>
-      </div>
-      <form id="registerForm">
-        <label for="personName">Seu nome</label>
-        <input id="personName" name="personName" maxlength="60" placeholder="Como podemos chamar você?" required>
+<main>
 
-        <label for="street">Rua</label>
-        <input id="street" name="street" maxlength="100" placeholder="Nome da rua" required>
+<!-- CADASTRO -->
 
-        <div class="form-grid">
-          <div>
-            <label for="neighborhood">Bairro</label>
-            <input id="neighborhood" name="neighborhood" maxlength="80" placeholder="Seu bairro" required>
-          </div>
-          <div>
-            <label for="houseNumber">Número da casa</label>
-            <input id="houseNumber" name="houseNumber" maxlength="12" placeholder="Nº" required>
-          </div>
+<section id="registerScreen" class="register">
+
+    <div class="register-box">
+
+        <span class="tag">FAÇA PARTE DA COMUNIDADE</span>
+
+        <h2>Bem-vindo à Santiago Solidária!</h2>
+
+        <p>Conectando pessoas e compartilhando esperança.</p>
+
+        <div class="photo-upload">
+            <label for="profilePhoto">
+                <img id="photoPreview"
+                src="https://placehold.co/120x120/e8f3ed/26734d?text=Foto"
+                alt="Foto de perfil">
+                <span>+</span>
+            </label>
+            <input type="file" id="profilePhoto" accept="image/*" hidden>
+            <small>Foto de perfil opcional</small>
         </div>
-        <label for="phone">Telefone (opcional)</label>
-        <input id="phone" name="phone" type="tel" maxlength="25" placeholder="(55) 99999-9999">
-        <p class="privacy-note">Sua rua e seu número são usados apenas neste protótipo para identificar seu cadastro. Não publique seu endereço completo em chamados.</p>
-        <button class="primary-btn" type="submit">Entrar no aplicativo</button>
-      </form>
-    </section>
 
-    <section id="appScreen" class="hidden">
-      <div class="welcome-row">
-        <div>
-          <span class="eyebrow">COMUNIDADE</span>
-          <h2>Olá, <span id="welcomeName">vizinho(a)</span>!</h2>
-          <p>Veja os pedidos de ajuda e faça a diferença.</p>
-        </div>
-        <button id="editProfileBtn" class="small-btn" type="button">Meu cadastro</button>
-      </div>
+        <form id="registerForm">
 
-      <section class="stats">
-        <article class="stat-card"><span class="stat-number" id="openCount">0</span><span>Chamados abertos</span></article>
-        <article class="stat-card"><span class="stat-number" id="doneCount">0</span><span>Atendidos</span></article>
-      </section>
+            <label>Nome completo</label>
+            <input id="personName" maxlength="60" required placeholder="Seu nome">
 
-      <section class="panel new-call-panel">
-        <div>
-          <span class="eyebrow">PRECISA DE AJUDA?</span>
-          <h3>Crie um chamado</h3>
-          <p>Explique brevemente o que está precisando.</p>
-        </div>
-        <form id="callForm">
-          <label for="callCategory">Tipo de ajuda</label>
-          <select id="callCategory" required>
-            <option value="">Selecione uma categoria</option>
-            <option>Alimentos</option>
-            <option>Roupas e cobertores</option>
-            <option>Transporte</option>
-            <option>Ajuda com tarefas</option>
-            <option>Doação de objetos</option>
-            <option>Outra necessidade</option>
-          </select>
-          <label for="callDescription">Descrição do chamado</label>
-          <textarea id="callDescription" rows="3" maxlength="240" placeholder="Conte do que você precisa..." required></textarea>
-          <label for="callNeighborhood">Bairro onde precisa de ajuda</label>
-          <input id="callNeighborhood" maxlength="80" placeholder="Ex.: Centro" required>
-          <button class="primary-btn" type="submit">Publicar chamado</button>
+            <label>Rua</label>
+            <input id="street" maxlength="100" required placeholder="Sua rua">
+
+            <div class="form-grid">
+                <div>
+                    <label>Bairro</label>
+                    <input id="neighborhood" maxlength="80" required placeholder="Seu bairro">
+                </div>
+
+                <div>
+                    <label>Número</label>
+                    <input id="houseNumber" maxlength="12" required placeholder="Número">
+                </div>
+            </div>
+
+            <label>Telefone (opcional)</label>
+            <input id="phone" maxlength="25" placeholder="Seu telefone">
+
+            <small class="privacy">
+                Seus dados pessoais não serão exibidos publicamente.
+                Este protótipo salva informações somente neste navegador.
+            </small>
+
+            <button class="primary" type="submit">
+                ENTRAR NA COMUNIDADE →
+            </button>
+
         </form>
-      </section>
+    </div>
+</section>
 
-      <section class="map-section">
-        <div class="section-title">
-          <div><span class="eyebrow">SANTIAGO - RS</span><h3>Mapa de chamados</h3></div>
-          <span class="map-key"><i></i> Chamado aberto</span>
-        </div>
-        <p class="map-hint">Selecione um marcador para ver o chamado. Neste protótipo, os pontos são aproximados pelo bairro.</p>
-        <div id="map" aria-label="Mapa de Santiago com chamados"></div>
-      </section>
 
-      <section class="list-section">
-        <div class="section-title">
-          <div><span class="eyebrow">AJUDE QUEM PRECISA</span><h3>Lista de chamados</h3></div>
-          <select id="statusFilter" aria-label="Filtrar chamados">
-            <option value="all">Todos</option>
-            <option value="open">Abertos</option>
-            <option value="accepted">Em atendimento</option>
-            <option value="done">Atendidos</option>
-          </select>
+<!-- APLICATIVO -->
+
+<section id="appScreen" class="hidden">
+
+    <div class="welcome">
+
+        <div>
+            <span class="tag">SUA COMUNIDADE</span>
+            <h2>Olá, <span id="welcomeName"></span>!</h2>
+            <p>Juntos podemos transformar vidas.</p>
         </div>
-        <div id="callsList" class="calls-list"></div>
-      </section>
-      <button id="logoutBtn" class="text-btn" type="button">Sair do cadastro</button>
+
+        <div class="profile">
+            <img id="userPhoto" src="" alt="Perfil">
+            <button id="editProfileBtn" class="secondary">Meu perfil</button>
+        </div>
+
+    </div>
+
+
+    <!-- ESTATÍSTICAS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <span>📢</span>
+            <strong id="openCount">0</strong>
+            <p>Abertos</p>
+        </div>
+
+        <div class="stat">
+            <span>🤝</span>
+            <strong id="acceptedCount">0</strong>
+            <p>Em atendimento</p>
+        </div>
+
+        <div class="stat">
+            <span>❤️</span>
+            <strong id="doneCount">0</strong>
+            <p>Concluídos</p>
+        </div>
+
+    </div>
+
+
+    <!-- NOVO CHAMADO -->
+
+    <section class="panel">
+
+        <span class="tag">PRECISA DE AJUDA?</span>
+        <h2>Publicar um chamado</h2>
+        <p>Selecione tudo aquilo de que você precisa.</p>
+
+        <form id="callForm">
+
+            <label>Categorias</label>
+
+            <div class="categories">
+
+                <label><input type="checkbox" name="category" value="Alimentos"> 🍎 Alimentos</label>
+
+                <label><input type="checkbox" name="category" value="Roupas"> 👕 Roupas</label>
+
+                <label><input type="checkbox" name="category" value="Transporte"> 🚗 Transporte</label>
+
+                <label><input type="checkbox" name="category" value="Medicamentos"> 💊 Medicamentos</label>
+
+                <label><input type="checkbox" name="category" value="Doações"> 🎁 Doações</label>
+
+                <label><input type="checkbox" name="category" value="Outros"> ❤️ Outros</label>
+
+            </div>
+
+            <label>Descreva sua necessidade</label>
+
+            <textarea id="callDescription" maxlength="240"
+            required placeholder="Conte como podemos ajudar..."></textarea>
+
+            <label>Bairro</label>
+
+            <input id="callNeighborhood" required maxlength="80"
+            placeholder="Bairro onde precisa de ajuda">
+
+            <div class="location-box">
+
+                <h3>📍 Localização no mapa</h3>
+
+                <p>Marque um ponto público próximo de onde precisa de ajuda.</p>
+
+                <button type="button" id="selectLocation" class="secondary">
+                    Escolher localização
+                </button>
+
+                <p id="locationStatus">Nenhum local selecionado.</p>
+
+            </div>
+
+            <button class="primary" type="submit">
+                PUBLICAR CHAMADO +
+            </button>
+
+        </form>
     </section>
-  </main>
 
-  <footer>Projeto demonstrativo • Santiago, Rio Grande do Sul</footer>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="java.script"></script>
+
+    <!-- MAPA -->
+
+    <section class="panel">
+
+        <span class="tag">LOCALIZAÇÃO</span>
+        <h2>Mapa de Santiago</h2>
+        <p>Visualize os pontos de referência dos chamados.</p>
+
+        <div id="map"></div>
+
+        <small class="map-credit">
+            Mapa © OpenStreetMap contributors.
+        </small>
+
+    </section>
+
+
+    <!-- LISTA DE CHAMADOS -->
+
+    <section class="panel">
+
+        <div class="list-heading">
+            <div>
+                <span class="tag">SOLIDARIEDADE EM AÇÃO</span>
+                <h2>Pedidos da comunidade</h2>
+            </div>
+
+            <select id="statusFilter">
+                <option value="all">Todos</option>
+                <option value="open">Abertos</option>
+                <option value="accepted">Em atendimento</option>
+                <option value="done">Concluídos</option>
+            </select>
+        </div>
+
+        <div id="callsList" class="calls-list"></div>
+
+    </section>
+
+
+    <button id="logoutBtn" class="logout">Sair da conta</button>
+
+</section>
+
+</main>
+
+
+<!-- RODAPÉ -->
+
+<footer>
+
+    <h2>❤️ Santiago Solidária</h2>
+
+    <p>Pequenas atitudes. Uma cidade mais unida.</p>
+
+    <div class="emergency">
+
+        <h3>📞 Telefones de emergência</h3>
+
+        <div class="emergency-grid">
+
+            <a href="tel:190">
+                🚔 Polícia Militar
+                <strong>190</strong>
+            </a>
+
+            <a href="tel:192">
+                🚑 SAMU
+                <strong>192</strong>
+            </a>
+
+            <a href="tel:193">
+                🚒 Bombeiros
+                <strong>193</strong>
+            </a>
+
+        </div>
+
+    </div>
+
+    <small>Projeto Santiago Solidária • Santiago - RS</small>
+
+</footer>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="java.script"></script>
+
 </body>
 </html>
