@@ -1,30 +1,270 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Santiago Solidária ❤️</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Santiago Solidária ❤️</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 
 <body>
 
-<header>
-    <div class="logo">❤️</div>
-    <div>
-        <h1>Santiago Solidária</h1>
-        <p>Uma cidade mais unida.</p>
-    </div>
-</header>
+<!-- =========================
+     LANDING PAGE
+========================= -->
 
-<main>
+<section id="landingScreen">
 
-<!-- CADASTRO -->
+    <!-- MENU -->
 
-<section id="registerScreen" class="register">
+    <header class="landing-header">
+
+        <a href="#inicio" class="brand">
+            <div class="logo">❤️</div>
+
+            <div>
+                <h1>Santiago Solidária</h1>
+                <p>Uma cidade mais unida.</p>
+            </div>
+        </a>
+
+        <nav class="landing-nav">
+            <a href="#inicio">Início</a>
+            <a href="#como-funciona">Como funciona</a>
+            <a href="#sobre">Sobre o projeto</a>
+
+            <button class="primary" id="joinBtn">
+                Fazer parte →
+            </button>
+        </nav>
+
+    </header>
+
+
+    <!-- HERO -->
+
+    <main>
+
+        <section class="hero" id="inicio">
+
+            <div class="hero-content">
+
+                <span class="tag">
+                    ❤️ SOLIDARIEDADE QUE TRANSFORMA
+                </span>
+
+                <h2>
+                    Juntos podemos fazer de
+                    <span>Santiago</span> um lugar melhor.
+                </h2>
+
+                <p>
+                    Uma comunidade onde pessoas podem pedir ajuda,
+                    oferecer apoio e transformar pequenas atitudes
+                    em grandes gestos de solidariedade.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <button class="primary" id="heroJoinBtn">
+                        Quero fazer parte →
+                    </button>
+
+                    <a href="#como-funciona" class="secondary">
+                        Conhecer o projeto
+                    </a>
+
+                </div>
+
+                <div class="hero-info">
+                    <span>🤝 Ajude quem precisa</span>
+                    <span>❤️ Faça a diferença</span>
+                </div>
+
+            </div>
+
+
+            <div class="hero-image">
+
+                <img
+                    src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1000&q=85"
+                    alt="Pessoas trabalhando juntas em uma ação solidária"
+                >
+
+                <div class="floating-card">
+                    <span>❤️</span>
+
+                    <div>
+                        <strong>Pequenos gestos.</strong>
+                        <p>Grandes transformações.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMO FUNCIONA -->
+
+        <section class="how-section" id="como-funciona">
+
+            <div class="section-heading">
+
+                <span class="tag">É SIMPLES PARTICIPAR</span>
+
+                <h2>
+                    A solidariedade começa com você.
+                </h2>
+
+                <p>
+                    Conectamos quem precisa de ajuda com quem
+                    pode fazer a diferença.
+                </p>
+
+            </div>
+
+
+            <div class="steps">
+
+                <article class="step-card">
+
+                    <div class="step-icon">📝</div>
+
+                    <span>01</span>
+
+                    <h3>Cadastre-se</h3>
+
+                    <p>
+                        Faça seu cadastro e entre para a
+                        comunidade Santiago Solidária.
+                    </p>
+
+                </article>
+
+
+                <article class="step-card">
+
+                    <div class="step-icon">📢</div>
+
+                    <span>02</span>
+
+                    <h3>Compartilhe ou encontre ajuda</h3>
+
+                    <p>
+                        Publique uma necessidade ou encontre
+                        pessoas que precisam de apoio.
+                    </p>
+
+                </article>
+
+
+                <article class="step-card">
+
+                    <div class="step-icon">🤝</div>
+
+                    <span>03</span>
+
+                    <h3>Faça a diferença</h3>
+
+                    <p>
+                        Conecte-se com a comunidade e transforme
+                        solidariedade em ação.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- SOBRE -->
+
+        <section class="about-section" id="sobre">
+
+            <div class="about-image">
+
+                <img
+                    src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1000&q=85"
+                    alt="Grupo de voluntários em ação comunitária"
+                >
+
+            </div>
+
+
+            <div class="about-content">
+
+                <span class="tag">NOSSO PROPÓSITO</span>
+
+                <h2>
+                    Uma cidade mais unida começa com pessoas que se importam.
+                </h2>
+
+                <p>
+                    O Santiago Solidária nasceu com o propósito
+                    de aproximar pessoas, facilitar a comunicação
+                    e incentivar ações de ajuda dentro da nossa cidade.
+                </p>
+
+                <p>
+                    Queremos criar uma rede de apoio onde cada
+                    pessoa possa contribuir da maneira que conseguir.
+                </p>
+
+                <button class="primary" id="aboutJoinBtn">
+                    Participar da comunidade →
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHAMADA FINAL -->
+
+        <section class="cta-section">
+
+            <span>❤️</span>
+
+            <h2>
+                Você também pode fazer parte dessa transformação.
+            </h2>
+
+            <p>
+                Entre para a comunidade e ajude a construir
+                uma Santiago mais solidária.
+            </p>
+
+            <button class="cta-button" id="finalJoinBtn">
+                Quero participar →
+            </button>
+
+        </section>
+
+    </main>
+
+</section>
+
+
+<!-- =========================
+     CADASTRO
+========================= -->
+
+<section id="registerScreen" class="register hidden">
 
     <div class="register-box">
+
+        <button type="button" id="backLandingBtn" class="secondary">
+            ← Voltar ao início
+        </button>
 
         <span class="tag">FAÇA PARTE DA COMUNIDADE</span>
 
@@ -32,39 +272,58 @@
 
         <p>Conectando pessoas e compartilhando esperança.</p>
 
+
         <div class="photo-upload">
+
             <label for="profilePhoto">
-                <img id="photoPreview"
-                src="https://placehold.co/120x120/e8f3ed/26734d?text=Foto"
-                alt="Foto de perfil">
+
+                <img
+                    id="photoPreview"
+                    src="https://placehold.co/120x120/e8f3ed/26734d?text=Foto"
+                    alt="Foto de perfil"
+                >
+
                 <span>+</span>
+
             </label>
-            <input type="file" id="profilePhoto" accept="image/*" hidden>
+
+            <input type="file" id="profilePhoto"
+            accept="image/*" hidden>
+
             <small>Foto de perfil opcional</small>
+
         </div>
+
 
         <form id="registerForm">
 
             <label>Nome completo</label>
-            <input id="personName" maxlength="60" required placeholder="Seu nome">
+            <input id="personName" maxlength="60"
+            required placeholder="Seu nome">
 
             <label>Rua</label>
-            <input id="street" maxlength="100" required placeholder="Sua rua">
+            <input id="street" maxlength="100"
+            required placeholder="Sua rua">
 
             <div class="form-grid">
+
                 <div>
                     <label>Bairro</label>
-                    <input id="neighborhood" maxlength="80" required placeholder="Seu bairro">
+                    <input id="neighborhood" maxlength="80"
+                    required placeholder="Seu bairro">
                 </div>
 
                 <div>
                     <label>Número</label>
-                    <input id="houseNumber" maxlength="12" required placeholder="Número">
+                    <input id="houseNumber" maxlength="12"
+                    required placeholder="Número">
                 </div>
+
             </div>
 
             <label>Telefone (opcional)</label>
-            <input id="phone" maxlength="25" placeholder="Seu telefone">
+            <input id="phone" maxlength="25"
+            placeholder="Seu telefone">
 
             <small class="privacy">
                 Seus dados pessoais não serão exibidos publicamente.
@@ -76,11 +335,15 @@
             </button>
 
         </form>
+
     </div>
+
 </section>
 
 
-<!-- APLICATIVO -->
+<!-- =========================
+     APLICATIVO
+========================= -->
 
 <section id="appScreen" class="hidden">
 
@@ -88,13 +351,22 @@
 
         <div>
             <span class="tag">SUA COMUNIDADE</span>
-            <h2>Olá, <span id="welcomeName"></span>!</h2>
+
+            <h2>
+                Olá, <span id="welcomeName"></span>!
+            </h2>
+
             <p>Juntos podemos transformar vidas.</p>
         </div>
 
         <div class="profile">
+
             <img id="userPhoto" src="" alt="Perfil">
-            <button id="editProfileBtn" class="secondary">Meu perfil</button>
+
+            <button id="editProfileBtn" class="secondary">
+                Meu perfil
+            </button>
+
         </div>
 
     </div>
@@ -130,7 +402,9 @@
     <section class="panel">
 
         <span class="tag">PRECISA DE AJUDA?</span>
+
         <h2>Publicar um chamado</h2>
+
         <p>Selecione tudo aquilo de que você precisa.</p>
 
         <form id="callForm">
@@ -139,17 +413,35 @@
 
             <div class="categories">
 
-                <label><input type="checkbox" name="category" value="Alimentos"> 🍎 Alimentos</label>
+                <label>
+                    <input type="checkbox" name="category" value="Alimentos">
+                    🍎 Alimentos
+                </label>
 
-                <label><input type="checkbox" name="category" value="Roupas"> 👕 Roupas</label>
+                <label>
+                    <input type="checkbox" name="category" value="Roupas">
+                    👕 Roupas
+                </label>
 
-                <label><input type="checkbox" name="category" value="Transporte"> 🚗 Transporte</label>
+                <label>
+                    <input type="checkbox" name="category" value="Transporte">
+                    🚗 Transporte
+                </label>
 
-                <label><input type="checkbox" name="category" value="Medicamentos"> 💊 Medicamentos</label>
+                <label>
+                    <input type="checkbox" name="category" value="Medicamentos">
+                    💊 Medicamentos
+                </label>
 
-                <label><input type="checkbox" name="category" value="Doações"> 🎁 Doações</label>
+                <label>
+                    <input type="checkbox" name="category" value="Doações">
+                    🎁 Doações
+                </label>
 
-                <label><input type="checkbox" name="category" value="Outros"> ❤️ Outros</label>
+                <label>
+                    <input type="checkbox" name="category" value="Outros">
+                    ❤️ Outros
+                </label>
 
             </div>
 
@@ -167,13 +459,17 @@
 
                 <h3>📍 Localização no mapa</h3>
 
-                <p>Marque um ponto público próximo de onde precisa de ajuda.</p>
+                <p>
+                    Marque um ponto público próximo de onde precisa de ajuda.
+                </p>
 
                 <button type="button" id="selectLocation" class="secondary">
                     Escolher localização
                 </button>
 
-                <p id="locationStatus">Nenhum local selecionado.</p>
+                <p id="locationStatus">
+                    Nenhum local selecionado.
+                </p>
 
             </div>
 
@@ -182,6 +478,7 @@
             </button>
 
         </form>
+
     </section>
 
 
@@ -190,7 +487,9 @@
     <section class="panel">
 
         <span class="tag">LOCALIZAÇÃO</span>
+
         <h2>Mapa de Santiago</h2>
+
         <p>Visualize os pontos de referência dos chamados.</p>
 
         <div id="map"></div>
@@ -207,17 +506,21 @@
     <section class="panel">
 
         <div class="list-heading">
+
             <div>
                 <span class="tag">SOLIDARIEDADE EM AÇÃO</span>
                 <h2>Pedidos da comunidade</h2>
             </div>
 
             <select id="statusFilter">
+
                 <option value="all">Todos</option>
                 <option value="open">Abertos</option>
                 <option value="accepted">Em atendimento</option>
                 <option value="done">Concluídos</option>
+
             </select>
+
         </div>
 
         <div id="callsList" class="calls-list"></div>
@@ -225,14 +528,16 @@
     </section>
 
 
-    <button id="logoutBtn" class="logout">Sair da conta</button>
+    <button id="logoutBtn" class="logout">
+        Sair da conta
+    </button>
 
 </section>
 
-</main>
 
-
-<!-- RODAPÉ -->
+<!-- =========================
+     RODAPÉ
+========================= -->
 
 <footer>
 
@@ -265,12 +570,17 @@
 
     </div>
 
-    <small>Projeto Santiago Solidária • Santiago - RS</small>
+    <small>
+        Projeto Santiago Solidária • Santiago - RS
+    </small>
 
 </footer>
 
 
+<!-- SCRIPTS -->
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script src="java.script"></script>
 
 </body>
