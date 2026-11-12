@@ -1,247 +1,452 @@
-// SANTIAGO SOLIDÁRIA — protótipo demonstrativo
-// Os dados ficam salvos apenas neste navegador (localStorage).
-// Para várias pessoas usarem em celulares diferentes, será necessário um banco de dados e um servidor.
+// SANTIAGO SOLIDÁRIA ❤️
 
-const STORAGE_PROFILE = "santiagoSolidariaProfile";
-const STORAGE_CALLS = "santiagoSolidariaCalls";
 
-const registerScreen = document.getElementById("registerScreen");
-const appScreen = document.getElementById("appScreen");
-const registerForm = document.getElementById("registerForm");
-const callForm = document.getElementById("callForm");
-const callsList = document.getElementById("callsList");
-const statusFilter = document.getElementById("statusFilter");
+// ELEMENTOS E DADOS
 
-let profile = load(STORAGE_PROFILE, null);
-let calls = load(STORAGE_CALLS, []);
-let map;
-let markersLayer;
+const $ = id => document.getElementById(id);
+
+const PROFILE = "santiagoProfile";
+const CALLS = "santiagoCalls";
+const DEFAULT_PHOTO = "https://placehold.co/120x120/e8f3ed/26734d?text=Foto";
 
 function load(key, fallback) {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
-  } catch {
-    return fallback;
-  }
+    try {
+        return JSON.parse(localStorage.getItem(key)) || fallback;
+    } catch {
+        return fallback;
+    }
 }
+
+let profile = load(PROFILE, null);
+let calls = load(CALLS, []).map(call => ({
+    ...call,
+    categories: call.categories || [call.category || "Outros"],
+    status: call.status === "atendido" ? "done" :
+            call.status === "aberto" ? "open" : call.status
+}));
+
+let map = null;
+let markers = null;
+let selectedLocation = null;
+let selecting = false;
+let temporaryMarker = null;
+let selectedPhoto = "";
 
 function save() {
-  localStorage.setItem(STORAGE_CALLS, JSON.stringify(calls));
+    localStorage.setItem(CALLS, JSON.stringify(calls));
 }
 
-function showApp() {
-  registerScreen.classList.add("hidden");
-  appScreen.classList.remove("hidden");
-  document.getElementById("welcomeName").textContent = profile.name.split(" ")[0];
-  document.getElementById("callNeighborhood").value = profile.neighborhood;
-  renderCalls();
-  setTimeout(() => {
-    if (!map) initMap();
-    else map.invalidateSize();
-  }, 100);
-}
+
+// FOTO DE PERFIL
+
+$("profilePhoto").addEventListener("change", event => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+        alert("Escolha uma imagem válida de até 5 MB.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = event => {
+        const img = new Image();
+
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = canvas.height = 250;
+
+            const size = Math.min(img.width, img.height);
+            const x = (img.width - size) / 2;
+            const y = (img.height - size) / 2;
+
+            canvas.getContext("2d").drawImage(
+                img, x, y, size, size, 0, 0, 250, 250
+            );
+
+            selectedPhoto = canvas.toDataURL("image/jpeg", 0.7);
+            $("photoPreview").src = selectedPhoto;
+        };
+
+        img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+
+// CADASTRO
+
+$("registerForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    profile = {
+        name: $("personName").value.trim(),
+        street: $("street").value.trim(),
+        neighborhood: $("neighborhood").value.trim(),
+        houseNumber: $("houseNumber").value.trim(),
+        phone: $("phone").value.trim(),
+        photo: selectedPhoto || profile?.photo || ""
+    };
+
+    if (!profile.name || !profile.street ||
+        !profile.neighborhood || !profile.houseNumber) {
+        alert("Preencha todos os campos obrigatórios.");
+        return;
+    }
+
+    localStorage.setItem(PROFILE, JSON.stringify(profile));
+    showApp();
+});
+
+
+// MOSTRAR CADASTRO
 
 function showRegister() {
-  appScreen.classList.add("hidden");
-  registerScreen.classList.remove("hidden");
-  if (profile) {
-    document.getElementById("personName").value = profile.name || "";
-    document.getElementById("street").value = profile.street || "";
-    document.getElementById("neighborhood").value = profile.neighborhood || "";
-    document.getElementById("houseNumber").value = profile.houseNumber || "";
-    document.getElementById("phone").value = profile.phone || "";
-  }
+    $("appScreen").classList.add("hidden");
+    $("registerScreen").classList.remove("hidden");
+
+    if (!profile) {
+        $("registerForm").reset();
+        selectedPhoto = "";
+        $("photoPreview").src = DEFAULT_PHOTO;
+        return;
+    }
+
+    $("personName").value = profile.name;
+    $("street").value = profile.street;
+    $("neighborhood").value = profile.neighborhood;
+    $("houseNumber").value = profile.houseNumber;
+    $("phone").value = profile.phone || "";
+
+    selectedPhoto = profile.photo || "";
+    $("photoPreview").src = selectedPhoto || DEFAULT_PHOTO;
 }
 
-registerForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  profile = {
-    name: document.getElementById("personName").value.trim(),
-    street: document.getElementById("street").value.trim(),
-    neighborhood: document.getElementById("neighborhood").value.trim(),
-    houseNumber: document.getElementById("houseNumber").value.trim(),
-    phone: document.getElementById("phone").value.trim()
-  };
-  localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
-  showApp();
-});
 
-document.getElementById("editProfileBtn").addEventListener("click", showRegister);
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  profile = null;
-  localStorage.removeItem(STORAGE_PROFILE);
-  showRegister();
-});
+// MOSTRAR APLICATIVO
 
-callForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const category = document.getElementById("callCategory").value;
-  const description = document.getElementById("callDescription").value.trim();
-  const neighborhood = document.getElementById("callNeighborhood").value.trim();
+function showApp() {
+    $("registerScreen").classList.add("hidden");
+    $("appScreen").classList.remove("hidden");
 
-  if (!category || !description || !neighborhood) return;
+    $("welcomeName").textContent = profile.name.split(" ")[0];
+    $("userPhoto").src = profile.photo || DEFAULT_PHOTO;
+    $("callNeighborhood").value = profile.neighborhood;
 
-  calls.unshift({
-    id: Date.now().toString(),
-    category,
-    description,
-    neighborhood,
-    requester: profile.name,
-    status: "open",
-    acceptedBy: "",
-    createdAt: new Date().toLocaleString("pt-BR"),
-    // O mapa usa a região aproximada do bairro; não exibe o número da casa.
-    coordinates: getNeighborhoodPoint(neighborhood)
-  });
+    renderCalls();
 
-  save();
-  callForm.reset();
-  document.getElementById("callNeighborhood").value = profile.neighborhood;
-  renderCalls();
-});
-
-statusFilter.addEventListener("change", renderCalls);
-
-function getNeighborhoodPoint(neighborhood) {
-  // Coordenadas aproximadas de referência para o protótipo.
-  // Ajuste os pontos conforme os bairros reais e confirme as coordenadas antes de publicar.
-  const points = {
-    "centro": [-29.1915, -54.8678],
-    "itu": [-29.1845, -54.8610],
-    "vista alegre": [-29.2020, -54.8780],
-    "lulu genro": [-29.1780, -54.8780],
-    "nei pereira": [-29.2050, -54.8580],
-    "ana bonato": [-29.1740, -54.8550]
-  };
-  const key = neighborhood.trim().toLocaleLowerCase("pt-BR");
-  if (points[key]) return points[key];
-  // Pequena variação em torno do centro para bairros não cadastrados.
-  const seed = [...key].reduce((sum, char) => sum + char.charCodeAt(0), 0);
-  return [-29.1915 + ((seed % 11) - 5) * 0.0018, -54.8678 + ((seed % 13) - 6) * 0.0018];
+    setTimeout(() => {
+        if (!map) initMap();
+        else map.invalidateSize();
+    }, 200);
 }
+
+
+// EDITAR PERFIL E SAIR
+
+$("editProfileBtn").onclick = showRegister;
+
+$("logoutBtn").onclick = () => {
+    if (!confirm("Deseja realmente sair da conta neste navegador?")) return;
+
+    profile = null;
+    selectedPhoto = "";
+
+    localStorage.removeItem(PROFILE);
+    showRegister();
+};
+
+
+// MAPA
 
 function initMap() {
-  map = L.map("map").setView([-29.1915, -54.8678], 13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
-  markersLayer = L.layerGroup().addTo(map);
-  renderMarkers();
+    map = L.map("map").setView([-29.1915, -54.8678], 14);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    markers = L.layerGroup().addTo(map);
+
+    map.on("click", event => {
+        if (!selecting) return;
+
+        // Ponto de referência escolhido pelo usuário.
+        selectedLocation = [
+            event.latlng.lat,
+            event.latlng.lng
+        ];
+
+        if (temporaryMarker) map.removeLayer(temporaryMarker);
+
+        temporaryMarker = L.marker(selectedLocation).addTo(map);
+
+        $("locationStatus").textContent =
+            "📍 Ponto de referência selecionado!";
+
+        selecting = false;
+        $("selectLocation").textContent = "Alterar localização";
+    });
+
+    renderMarkers();
 }
 
-function renderMarkers() {
-  if (!map || !markersLayer) return;
-  markersLayer.clearLayers();
 
-  calls.filter(call => call.status !== "done").forEach(call => {
-    const marker = L.marker(call.coordinates, {
-      icon: L.divIcon({
-        className: "custom-marker-wrap",
-        html: '<div class="custom-marker">!</div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      })
-    }).addTo(markersLayer);
+// SELECIONAR LOCALIZAÇÃO
 
-    const statusText = call.status === "accepted" ? "Em atendimento" : "Chamado aberto";
-    marker.bindPopup(`
-      <div class="popup-content">
-        <strong>${escapeHTML(call.category)}</strong>
-        <p>${escapeHTML(call.description)}</p>
-        <small>${escapeHTML(call.neighborhood)} • ${statusText}</small>
-        <p><button class="popup-button" onclick="acceptCall('${call.id}')">Ver / aceitar chamado</button></p>
-      </div>
-    `);
-  });
+$("selectLocation").onclick = () => {
+    selecting = true;
+
+    $("locationStatus").textContent =
+        "Clique no mapa para escolher um ponto público próximo.";
+
+    $("selectLocation").textContent = "Clique no mapa...";
+};
+
+
+// PUBLICAR CHAMADO
+
+$("callForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const categories = [
+        ...document.querySelectorAll('input[name="category"]:checked')
+    ].map(item => item.value);
+
+    const description = $("callDescription").value.trim();
+    const neighborhood = $("callNeighborhood").value.trim();
+
+    if (!categories.length) {
+        alert("Selecione pelo menos uma categoria.");
+        return;
+    }
+
+    if (!selectedLocation) {
+        alert("Escolha um ponto de referência no mapa.");
+        return;
+    }
+
+    if (!description || !neighborhood) {
+        alert("Preencha a descrição e o bairro.");
+        return;
+    }
+
+    const call = {
+        id: Date.now().toString(),
+        categories,
+        description,
+        neighborhood,
+        requester: profile.name,
+        requesterPhoto: profile.photo || "",
+        status: "open",
+        acceptedBy: "",
+        coordinates: selectedLocation,
+        createdAt: new Date().toLocaleString("pt-BR")
+    };
+
+    calls.unshift(call);
+
+    save();
+
+    selectedLocation = null;
+    selecting = false;
+
+    if (temporaryMarker) {
+        map.removeLayer(temporaryMarker);
+        temporaryMarker = null;
+    }
+
+    $("locationStatus").textContent = "Nenhum local selecionado.";
+    $("selectLocation").textContent = "Escolher localização";
+
+    $("callForm").reset();
+    $("callNeighborhood").value = profile.neighborhood;
+
+    renderCalls();
+
+    alert("Chamado publicado com sucesso!");
+});
+
+
+// PROTEÇÃO DE TEXTO
+
+function safe(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
 }
+
+
+// MOSTRAR CHAMADOS
 
 function renderCalls() {
-  const filter = statusFilter.value;
-  const visibleCalls = calls.filter(call => filter === "all" || call.status === filter);
-  callsList.innerHTML = "";
+    const filter = $("statusFilter").value;
 
-  document.getElementById("openCount").textContent = calls.filter(c => c.status === "open").length;
-  document.getElementById("doneCount").textContent = calls.filter(c => c.status === "done").length;
+    const filtered = calls.filter(call =>
+        filter === "all" || call.status === filter
+    );
 
-  if (visibleCalls.length === 0) {
-    callsList.innerHTML = '<div class="empty-state">Nenhum chamado nesta categoria ainda.</div>';
-  } else {
-    visibleCalls.forEach(call => {
-      const card = document.createElement("article");
-      card.className = "call-card";
-      const statusLabel = {
-        open: "Aberto",
-        accepted: "Em atendimento",
-        done: "Atendido"
-      }[call.status];
+    $("openCount").textContent =
+        calls.filter(c => c.status === "open").length;
 
-      let action = "";
-      if (call.status === "open") {
-        action = `<button class="accept-btn" onclick="acceptCall('${call.id}')">Aceitar chamado</button>`;
-      } else if (call.status === "accepted") {
-        action = `<p class="accepted-info">Em atendimento por ${escapeHTML(call.acceptedBy)}.</p>
-          ${call.acceptedBy === profile.name ? `<button class="complete-btn" onclick="completeCall('${call.id}')">Marcar como atendido</button>` : ""}`;
-      } else {
-        action = '<p class="completed-info">Este pedido já foi atendido. Obrigado por ajudar!</p>';
-      }
+    $("acceptedCount").textContent =
+        calls.filter(c => c.status === "accepted").length;
 
-      card.innerHTML = `
-        <div class="call-card-top">
-          <span class="category-tag">${escapeHTML(call.category)}</span>
-          <span class="status status-${call.status}">${statusLabel}</span>
-        </div>
-        <h4>${escapeHTML(call.description)}</h4>
-        <p class="call-meta"><span>📍 ${escapeHTML(call.neighborhood)}</span><span>👤 ${escapeHTML(call.requester)}</span></p>
-        <p class="call-date">${escapeHTML(call.createdAt)}</p>
-        ${action}
-      `;
-      callsList.appendChild(card);
+    $("doneCount").textContent =
+        calls.filter(c => c.status === "done").length;
+
+    $("callsList").innerHTML = "";
+
+    if (!filtered.length) {
+        $("callsList").innerHTML =
+            '<div class="empty">Nenhum chamado encontrado. ❤️</div>';
+    }
+
+    filtered.forEach(call => {
+        const card = document.createElement("article");
+        card.className = "call-card";
+
+        const status = {
+            open: "Aberto",
+            accepted: "Em atendimento",
+            done: "Concluído"
+        }[call.status];
+
+        const categories = call.categories
+            .map(category => `<span class="category-tag">${safe(category)}</span>`)
+            .join(" ");
+
+        let action = "";
+
+        if (call.status === "open" && call.requester !== profile.name) {
+            action = `<button class="accept-btn" onclick="acceptCall('${call.id}')">
+                Aceitar chamado
+            </button>`;
+        }
+
+        if (call.status === "accepted") {
+            action = `<p>🤝 Em atendimento por ${safe(call.acceptedBy)}</p>`;
+
+            if (call.acceptedBy === profile.name) {
+                action += `<button class="complete-btn" onclick="completeCall('${call.id}')">
+                    Marcar como concluído
+                </button>`;
+            }
+        }
+
+        if (call.status === "done") {
+            action = "<p>❤️ Necessidade atendida!</p>";
+        }
+
+        card.innerHTML = `
+            <div class="call-top">
+                ${categories}
+                <span class="status status-${call.status}">${status}</span>
+            </div>
+
+            <h3>${safe(call.description)}</h3>
+
+            <p>📍 ${safe(call.neighborhood)}</p>
+            <p>👤 ${safe(call.requester)}</p>
+            <p>📅 ${safe(call.createdAt)}</p>
+
+            ${action}
+        `;
+
+        $("callsList").appendChild(card);
     });
-  }
-  renderMarkers();
+
+    renderMarkers();
 }
+
+
+// FILTROS
+
+$("statusFilter").addEventListener("change", renderCalls);
+
+
+// ACEITAR CHAMADO
 
 function acceptCall(id) {
-  const call = calls.find(item => item.id === id);
-  if (!call) return;
-  if (call.status === "done") {
-    alert("Este chamado já foi atendido!");
-    return;
-  }
-  if (call.status === "accepted") {
-    alert(`Este chamado já está em atendimento por ${call.acceptedBy}.`);
-    return;
-  }
-  if (call.requester === profile.name) {
-    alert("Você não pode aceitar seu próprio chamado.");
-    return;
-  }
-  call.status = "accepted";
-  call.acceptedBy = profile.name;
-  save();
-  renderCalls();
-  if (map) map.closePopup();
-  alert("Chamado aceito! Combine a ajuda com a pessoa de forma segura.");
+    const call = calls.find(item => item.id === id);
+
+    if (!call || call.status !== "open") return;
+
+    if (call.requester === profile.name) {
+        alert("Você não pode aceitar seu próprio chamado.");
+        return;
+    }
+
+    call.status = "accepted";
+    call.acceptedBy = profile.name;
+
+    save();
+    renderCalls();
+
+    alert("Obrigado por ajudar alguém de Santiago!");
 }
+
+
+// CONCLUIR CHAMADO
 
 function completeCall(id) {
-  const call = calls.find(item => item.id === id);
-  if (!call || call.acceptedBy !== profile.name) return;
-  call.status = "done";
-  save();
-  renderCalls();
+    const call = calls.find(item => item.id === id);
+
+    if (!call || call.acceptedBy !== profile.name) return;
+
+    if (!confirm("Deseja marcar este chamado como concluído?")) return;
+
+    call.status = "done";
+
+    save();
+    renderCalls();
+
+    alert("Chamado concluído! Obrigado pela solidariedade.");
 }
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-  }[char]));
+
+// MARCADORES DO MAPA
+
+function renderMarkers() {
+    if (!map || !markers) return;
+
+    markers.clearLayers();
+
+    calls.forEach(call => {
+        if (!call.coordinates || !Array.isArray(call.coordinates)) return;
+
+        if (call.status === "done") return;
+
+        const marker = L.marker(call.coordinates).addTo(markers);
+
+        const categories = call.categories
+            .map(safe)
+            .join(", ");
+
+        marker.bindPopup(`
+            <strong>${categories}</strong>
+            <p>${safe(call.description)}</p>
+            <p>📍 ${safe(call.neighborhood)}</p>
+            <p>Status: ${safe(call.status)}</p>
+        `);
+    });
 }
 
-if (profile) showApp();
-else showRegister();
 
-// Disponibiliza as ações para os botões criados dinamicamente no HTML.
+// INICIALIZAÇÃO
+
+if (profile) {
+    showApp();
+} else {
+    showRegister();
+}
+
 window.acceptCall = acceptCall;
 window.completeCall = completeCall;
