@@ -1,5 +1,5 @@
-// SANTIAGO SOLIDÁRIA ❤️
 
+// SANTIAGO SOLIDÁRIA ❤️
 
 // ELEMENTOS E DADOS
 
@@ -174,7 +174,6 @@ function initMap() {
     map.on("click", event => {
         if (!selecting) return;
 
-        // Ponto de referência escolhido pelo usuário.
         selectedLocation = [
             event.latlng.lat,
             event.latlng.lng
@@ -243,6 +242,7 @@ $("callForm").addEventListener("submit", event => {
         requesterPhoto: profile.photo || "",
         status: "open",
         acceptedBy: "",
+        progress: "",
         coordinates: selectedLocation,
         createdAt: new Date().toLocaleString("pt-BR")
     };
@@ -331,18 +331,44 @@ function renderCalls() {
             </button>`;
         }
 
+        // CHAMADO EM ATENDIMENTO
+
         if (call.status === "accepted") {
             action = `<p>🤝 Em atendimento por ${safe(call.acceptedBy)}</p>`;
+
+            // SOLICITANTE OU RESPONSÁVEL PODE ATUALIZAR
+
+            if (call.acceptedBy === profile.name ||
+                call.requester === profile.name) {
+
+                action += `
+                    <button class="secondary"
+                        onclick="updateProgress('${call.id}')">
+                        Atualizar andamento
+                    </button>
+                `;
+            }
+
+            // SOMENTE QUEM ACEITOU PODE CONCLUIR
 
             if (call.acceptedBy === profile.name) {
                 action += `<button class="complete-btn" onclick="completeCall('${call.id}')">
                     Marcar como concluído
                 </button>`;
             }
+
+            if (call.progress) {
+                action += `<p>📌 Andamento: ${safe(call.progress)}</p>`;
+                action += `<p>🕒 Última atualização: ${safe(call.updatedAt || "")}</p>`;
+            }
         }
 
         if (call.status === "done") {
             action = "<p>❤️ Necessidade atendida!</p>";
+
+            if (call.progress) {
+                action += `<p>📌 Último andamento: ${safe(call.progress)}</p>`;
+            }
         }
 
         card.innerHTML = `
@@ -391,6 +417,35 @@ function acceptCall(id) {
     renderCalls();
 
     alert("Obrigado por ajudar alguém de Santiago!");
+}
+
+
+// ATUALIZAR ANDAMENTO DO CHAMADO
+
+function updateProgress(id) {
+    const call = calls.find(item => item.id === id);
+
+    if (!call) return;
+
+    if (call.requester !== profile.name &&
+        call.acceptedBy !== profile.name) {
+        alert("Você não tem permissão para atualizar este chamado.");
+        return;
+    }
+
+    if (call.status !== "accepted") return;
+
+    const progress = prompt("Informe o andamento do pedido:", call.progress || "");
+
+    if (progress === null || !progress.trim()) return;
+
+    call.progress = progress.trim();
+    call.updatedAt = new Date().toLocaleString("pt-BR");
+
+    save();
+    renderCalls();
+
+    alert("Andamento atualizado com sucesso! ❤️");
 }
 
 
@@ -450,3 +505,4 @@ if (profile) {
 
 window.acceptCall = acceptCall;
 window.completeCall = completeCall;
+window.updateProgress = updateProgress;
