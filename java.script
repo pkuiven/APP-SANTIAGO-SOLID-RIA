@@ -1,25 +1,43 @@
 
 // ==========================================
 // SANTIAGO SOLIDÁRIA ❤️
-// JAVASCRIPT COMPLETO
+// JAVASCRIPT OTIMIZADO
+// PARTE 1 - CONFIGURAÇÕES E CADASTRO
 // ==========================================
 
+// ==========================================
 // ELEMENTOS
+// ==========================================
+
 const $ = id => document.getElementById(id);
 
-// ARMAZENAMENTO
 const PROFILE = "santiagoProfile";
 const CALLS = "santiagoCalls";
 
 const DEFAULT_PHOTO =
     "https://placehold.co/120x120/e8f3ed/26734d?text=Foto";
 
-// CARREGAR DADOS
+// ==========================================
+// ARMAZENAMENTO
+// ==========================================
+
 function load(key, fallback) {
     try {
         return JSON.parse(localStorage.getItem(key)) ?? fallback;
-    } catch {
+    } catch (error) {
+        console.error("Erro ao carregar dados:", error);
         return fallback;
+    }
+}
+
+function store(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+    } catch (error) {
+        console.error("Erro ao salvar dados:", error);
+        alert("Não foi possível salvar. Verifique o espaço disponível no navegador.");
+        return false;
     }
 }
 
@@ -28,66 +46,89 @@ let profile = load(PROFILE, null);
 let calls = load(CALLS, []).map(call => ({
     ...call,
     categories: call.categories || [call.category || "Outros"],
-    status: call.status === "atendido" ? "done" :
-            call.status === "aberto" ? "open" : call.status
+    status:
+        call.status === "atendido" ? "done" :
+        call.status === "aberto" ? "open" :
+        call.status || "open"
 }));
 
 let map = null;
 let markers = null;
+
 let selectedLocation = null;
 let selecting = false;
 let temporaryMarker = null;
 let selectedPhoto = "";
 
 function save() {
-    localStorage.setItem(CALLS, JSON.stringify(calls));
+    return store(CALLS, calls);
 }
 
 // ==========================================
-// NAVEGAÇÃO DA LANDING PAGE
+// NAVEGAÇÃO
 // ==========================================
 
 function showLanding() {
-    $("landingScreen")?.classList.remove("hidden");
-    $("registerScreen")?.classList.add("hidden");
-    $("appScreen")?.classList.add("hidden");
+    $("landingScreen").classList.remove("hidden");
+    $("registerScreen").classList.add("hidden");
+    $("appScreen").classList.add("hidden");
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 function openRegister() {
-    $("landingScreen")?.classList.add("hidden");
-    $("appScreen")?.classList.add("hidden");
-    $("registerScreen")?.classList.remove("hidden");
+    $("landingScreen").classList.add("hidden");
+    $("appScreen").classList.add("hidden");
+    $("registerScreen").classList.remove("hidden");
 
     if (profile) {
-        $("personName").value = profile.name;
-        $("street").value = profile.street;
-        $("neighborhood").value = profile.neighborhood;
-        $("houseNumber").value = profile.houseNumber;
+        $("personName").value = profile.name || "";
+        $("street").value = profile.street || "";
+        $("neighborhood").value = profile.neighborhood || "";
+        $("houseNumber").value = profile.houseNumber || "";
         $("phone").value = profile.phone || "";
 
         selectedPhoto = profile.photo || "";
-        $("photoPreview").src = selectedPhoto || DEFAULT_PHOTO;
+
+        $("photoPreview").src =
+            selectedPhoto || DEFAULT_PHOTO;
+
     } else {
         $("registerForm").reset();
+
         selectedPhoto = "";
+
         $("photoPreview").src = DEFAULT_PHOTO;
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
-// BOTÕES DA LANDING PAGE
-// Adicione estes IDs aos botões correspondentes no HTML.
+// ==========================================
+// BOTÕES DE PARTICIPAÇÃO
+// ==========================================
 
-document.querySelectorAll(".open-register").forEach(button => {
-    button.addEventListener("click", openRegister);
+[
+    "joinBtn",
+    "heroJoinBtn",
+    "aboutJoinBtn",
+    "finalJoinBtn"
+].forEach(id => {
+    $(id)?.addEventListener("click", openRegister);
 });
 
-document.querySelectorAll(".back-home").forEach(button => {
-    button.addEventListener("click", showLanding);
-});
+// VOLTAR AO INÍCIO
+
+$("backLandingBtn")?.addEventListener(
+    "click",
+    showLanding
+);
 
 // ==========================================
 // FOTO DE PERFIL
@@ -99,10 +140,14 @@ $("profilePhoto").addEventListener("change", event => {
 
     if (!file) return;
 
-    if (!file.type.startsWith("image/") ||
-        file.size > 5 * 1024 * 1024) {
-
+    if (
+        !file.type.startsWith("image/") ||
+        file.size > 5 * 1024 * 1024
+    ) {
         alert("Escolha uma imagem válida de até 5 MB.");
+
+        event.target.value = "";
+
         return;
     }
 
@@ -116,25 +161,39 @@ $("profilePhoto").addEventListener("change", event => {
 
             const canvas = document.createElement("canvas");
 
-            canvas.width = canvas.height = 250;
+            canvas.width = 250;
+            canvas.height = 250;
 
             const size = Math.min(img.width, img.height);
 
             const x = (img.width - size) / 2;
             const y = (img.height - size) / 2;
 
-            canvas.getContext("2d").drawImage(
+            const context = canvas.getContext("2d");
+
+            context.drawImage(
                 img,
                 x, y, size, size,
                 0, 0, 250, 250
             );
 
-            selectedPhoto = canvas.toDataURL("image/jpeg", 0.7);
+            selectedPhoto = canvas.toDataURL(
+                "image/jpeg",
+                0.7
+            );
 
             $("photoPreview").src = selectedPhoto;
         };
 
+        img.onerror = () => {
+            alert("Não foi possível carregar essa imagem.");
+        };
+
         img.src = event.target.result;
+    };
+
+    reader.onerror = () => {
+        alert("Erro ao ler a imagem selecionada.");
     };
 
     reader.readAsDataURL(file);
@@ -148,26 +207,40 @@ $("registerForm").addEventListener("submit", event => {
 
     event.preventDefault();
 
-    profile = {
+    const newProfile = {
+
         name: $("personName").value.trim(),
+
         street: $("street").value.trim(),
+
         neighborhood: $("neighborhood").value.trim(),
+
         houseNumber: $("houseNumber").value.trim(),
+
         phone: $("phone").value.trim(),
+
         photo: selectedPhoto || profile?.photo || ""
     };
 
     if (
-        !profile.name ||
-        !profile.street ||
-        !profile.neighborhood ||
-        !profile.houseNumber
+        !newProfile.name ||
+        !newProfile.street ||
+        !newProfile.neighborhood ||
+        !newProfile.houseNumber
     ) {
         alert("Preencha todos os campos obrigatórios.");
         return;
     }
 
-    localStorage.setItem(PROFILE, JSON.stringify(profile));
+    // SALVAR PERFIL
+
+    if (!store(PROFILE, newProfile)) {
+        return;
+    }
+
+    profile = newProfile;
+
+    selectedPhoto = profile.photo;
 
     showApp();
 });
@@ -178,9 +251,14 @@ $("registerForm").addEventListener("submit", event => {
 
 function showApp() {
 
-    $("landingScreen")?.classList.add("hidden");
-    $("registerScreen")?.classList.add("hidden");
-    $("appScreen")?.classList.remove("hidden");
+    if (!profile) {
+        openRegister();
+        return;
+    }
+
+    $("landingScreen").classList.add("hidden");
+    $("registerScreen").classList.add("hidden");
+    $("appScreen").classList.remove("hidden");
 
     $("welcomeName").textContent =
         profile.name.split(" ")[0];
@@ -189,11 +267,14 @@ function showApp() {
         profile.photo || DEFAULT_PHOTO;
 
     $("callNeighborhood").value =
-        profile.neighborhood;
+        profile.neighborhood || "";
 
     renderCalls();
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
     setTimeout(() => {
 
@@ -208,12 +289,19 @@ function showApp() {
 }
 
 // ==========================================
-// PERFIL
+// EDITAR PERFIL
 // ==========================================
 
-$("editProfileBtn").onclick = openRegister;
+$("editProfileBtn").addEventListener(
+    "click",
+    openRegister
+);
 
-$("logoutBtn").onclick = () => {
+// ==========================================
+// SAIR DA CONTA
+// ==========================================
+
+$("logoutBtn").addEventListener("click", () => {
 
     if (!confirm("Deseja realmente sair da conta neste navegador?")) {
         return;
@@ -225,10 +313,21 @@ $("logoutBtn").onclick = () => {
     localStorage.removeItem(PROFILE);
 
     showLanding();
-};
+});
 
 // ==========================================
-// MAPA
+// FIM DA PARTE 1
+// A PARTE 2 CONTINUARÁ AQUI
+// ==========================================
+
+
+// ==========================================
+// SANTIAGO SOLIDÁRIA ❤️
+// PARTE 2 - MAPA E CHAMADOS
+// ==========================================
+
+// ==========================================
+// MAPA DE SANTIAGO
 // ==========================================
 
 function initMap() {
@@ -252,6 +351,8 @@ function initMap() {
     ).addTo(map);
 
     markers = L.layerGroup().addTo(map);
+
+    // CLIQUE NO MAPA PARA SELECIONAR LOCAL
 
     map.on("click", event => {
 
@@ -286,7 +387,12 @@ function initMap() {
 // SELECIONAR LOCALIZAÇÃO
 // ==========================================
 
-$("selectLocation").onclick = () => {
+$("selectLocation").addEventListener("click", () => {
+
+    if (!map) {
+        alert("O mapa ainda não foi carregado.");
+        return;
+    }
 
     selecting = true;
 
@@ -295,94 +401,7 @@ $("selectLocation").onclick = () => {
 
     $("selectLocation").textContent =
         "Clique no mapa...";
-};
 
-// ==========================================
-// PUBLICAR CHAMADO
-// ==========================================
-
-$("callForm").addEventListener("submit", event => {
-
-    event.preventDefault();
-
-    const categories = [
-        ...document.querySelectorAll(
-            'input[name="category"]:checked'
-        )
-    ].map(item => item.value);
-
-    const description =
-        $("callDescription").value.trim();
-
-    const neighborhood =
-        $("callNeighborhood").value.trim();
-
-    if (!categories.length) {
-        alert("Selecione pelo menos uma categoria.");
-        return;
-    }
-
-    if (!selectedLocation) {
-        alert("Escolha um ponto de referência no mapa.");
-        return;
-    }
-
-    if (!description || !neighborhood) {
-        alert("Preencha a descrição e o bairro.");
-        return;
-    }
-
-    const call = {
-
-        id: Date.now().toString(),
-
-        categories,
-
-        description,
-
-        neighborhood,
-
-        requester: profile.name,
-
-        requesterPhoto: profile.photo || "",
-
-        status: "open",
-
-        acceptedBy: "",
-
-        progress: "",
-
-        coordinates: selectedLocation,
-
-        createdAt: new Date().toLocaleString("pt-BR")
-    };
-
-    calls.unshift(call);
-
-    save();
-
-    selectedLocation = null;
-    selecting = false;
-
-    if (temporaryMarker) {
-        map.removeLayer(temporaryMarker);
-        temporaryMarker = null;
-    }
-
-    $("locationStatus").textContent =
-        "Nenhum local selecionado.";
-
-    $("selectLocation").textContent =
-        "Escolher localização";
-
-    $("callForm").reset();
-
-    $("callNeighborhood").value =
-        profile.neighborhood;
-
-    renderCalls();
-
-    alert("Chamado publicado com sucesso! ❤️");
 });
 
 // ==========================================
@@ -404,6 +423,145 @@ function safe(value) {
 }
 
 // ==========================================
+// PUBLICAR CHAMADO
+// ==========================================
+
+$("callForm").addEventListener("submit", event => {
+
+    event.preventDefault();
+
+    if (!profile) {
+        alert("Faça seu cadastro antes de publicar um chamado.");
+        openRegister();
+        return;
+    }
+
+    // CATEGORIAS SELECIONADAS
+
+    const categories = [
+        ...document.querySelectorAll(
+            'input[name="category"]:checked'
+        )
+    ].map(item => item.value);
+
+    // INFORMAÇÕES DO CHAMADO
+
+    const description =
+        $("callDescription").value.trim();
+
+    const neighborhood =
+        $("callNeighborhood").value.trim();
+
+    // VALIDAÇÕES
+
+    if (!categories.length) {
+        alert("Selecione pelo menos uma categoria.");
+        return;
+    }
+
+    if (!description) {
+        alert("Descreva sua necessidade.");
+        return;
+    }
+
+    if (!neighborhood) {
+        alert("Informe o bairro.");
+        return;
+    }
+
+    if (!selectedLocation) {
+        alert("Escolha um ponto de referência no mapa.");
+        return;
+    }
+
+    // CRIAR CHAMADO
+
+    const call = {
+
+        id: crypto.randomUUID
+            ? crypto.randomUUID()
+            : Date.now().toString(),
+
+        categories,
+
+        description,
+
+        neighborhood,
+
+        requester: profile.name,
+
+        requesterPhoto: profile.photo || "",
+
+        status: "open",
+
+        acceptedBy: "",
+
+        progress: "",
+
+        coordinates: [...selectedLocation],
+
+        createdAt: new Date().toLocaleString("pt-BR")
+
+    };
+
+    // ADICIONAR À LISTA
+
+    calls.unshift(call);
+
+    // SALVAR
+
+    if (!save()) {
+
+        calls.shift();
+
+        return;
+    }
+
+    // LIMPAR LOCALIZAÇÃO TEMPORÁRIA
+
+    selectedLocation = null;
+    selecting = false;
+
+    if (temporaryMarker && map) {
+
+        map.removeLayer(temporaryMarker);
+
+        temporaryMarker = null;
+    }
+
+    $("locationStatus").textContent =
+        "Nenhum local selecionado.";
+
+    $("selectLocation").textContent =
+        "Escolher localização";
+
+    // LIMPAR FORMULÁRIO
+
+    $("callForm").reset();
+
+    $("callNeighborhood").value =
+        profile.neighborhood || "";
+
+    // ATUALIZAR APLICATIVO
+
+    renderCalls();
+
+    alert("Chamado publicado com sucesso! ❤️");
+
+});
+
+// ==========================================
+// FIM DA PARTE 2
+// A PARTE 3 CONTINUARÁ AQUI
+// ==========================================
+
+
+// ==========================================
+// SANTIAGO SOLIDÁRIA ❤️
+// PARTE 3 - CHAMADOS E ATENDIMENTO
+// ==========================================
+
+// ==========================================
 // MOSTRAR CHAMADOS
 // ==========================================
 
@@ -415,6 +573,8 @@ function renderCalls() {
         filter === "all" || call.status === filter
     );
 
+    // ATUALIZAR ESTATÍSTICAS
+
     $("openCount").textContent =
         calls.filter(c => c.status === "open").length;
 
@@ -424,13 +584,21 @@ function renderCalls() {
     $("doneCount").textContent =
         calls.filter(c => c.status === "done").length;
 
+    // LIMPAR LISTA
+
     $("callsList").innerHTML = "";
 
     if (!filtered.length) {
 
-        $("callsList").innerHTML =
-            '<div class="empty">Nenhum chamado encontrado. ❤️</div>';
+        $("callsList").innerHTML = `
+            <div class="empty">
+                Nenhum chamado encontrado. ❤️
+            </div>
+        `;
+
     }
+
+    // CRIAR CARTÕES
 
     filtered.forEach(call => {
 
@@ -439,116 +607,188 @@ function renderCalls() {
         card.className = "call-card";
 
         const status = {
+
             open: "Aberto",
+
             accepted: "Em atendimento",
+
             done: "Concluído"
+
         }[call.status] || "Aberto";
 
+        // CATEGORIAS
+
         const categories = call.categories
-            .map(category =>
-                `<span class="category-tag">${safe(category)}</span>`
-            )
+            .map(category => `
+                <span class="category-tag">
+                    ${safe(category)}
+                </span>
+            `)
             .join(" ");
 
         let action = "";
 
+        // ==================================
         // ACEITAR CHAMADO
+        // ==================================
 
         if (
             call.status === "open" &&
-            call.requester !== profile.name
+            call.requester !== profile?.name
         ) {
 
             action = `
                 <button class="accept-btn"
                     onclick="acceptCall('${safe(call.id)}')">
+
                     Aceitar chamado
+
                 </button>
             `;
+
         }
 
-        // EM ATENDIMENTO
+        // ==================================
+        // CHAMADO EM ATENDIMENTO
+        // ==================================
 
         if (call.status === "accepted") {
 
             action = `
-                <p>🤝 Em atendimento por ${safe(call.acceptedBy)}</p>
+                <p>
+                    🤝 Em atendimento por
+                    ${safe(call.acceptedBy)}
+                </p>
             `;
 
+            // SOLICITANTE OU RESPONSÁVEL
+
             if (
-                call.acceptedBy === profile.name ||
-                call.requester === profile.name
+                call.acceptedBy === profile?.name ||
+                call.requester === profile?.name
             ) {
 
                 action += `
                     <button class="secondary"
                         onclick="updateProgress('${safe(call.id)}')">
+
                         Atualizar andamento
+
                     </button>
                 `;
+
             }
 
-            if (call.acceptedBy === profile.name) {
+            // SOMENTE QUEM ACEITOU PODE CONCLUIR
+
+            if (call.acceptedBy === profile?.name) {
 
                 action += `
                     <button class="complete-btn"
                         onclick="completeCall('${safe(call.id)}')">
+
                         Marcar como concluído
+
                     </button>
                 `;
+
             }
+
+            // MOSTRAR ATUALIZAÇÃO
 
             if (call.progress) {
 
                 action += `
-                    <p>📌 Andamento: ${safe(call.progress)}</p>
-                    <p>🕒 Última atualização: ${safe(call.updatedAt || "")}</p>
+                    <p>
+                        📌 Andamento:
+                        ${safe(call.progress)}
+                    </p>
+
+                    <p>
+                        🕒 Última atualização:
+                        ${safe(call.updatedAt || "")}
+                    </p>
                 `;
+
             }
+
         }
 
-        // CONCLUÍDO
+        // ==================================
+        // CHAMADO CONCLUÍDO
+        // ==================================
 
         if (call.status === "done") {
 
             action = `
-                <p>❤️ Necessidade atendida!</p>
+                <p>
+                    ❤️ Necessidade atendida!
+                </p>
             `;
 
             if (call.progress) {
+
                 action += `
-                    <p>📌 Último andamento: ${safe(call.progress)}</p>
+                    <p>
+                        📌 Último andamento:
+                        ${safe(call.progress)}
+                    </p>
                 `;
+
             }
+
         }
 
+        // ==================================
+        // CONTEÚDO DO CARTÃO
+        // ==================================
+
         card.innerHTML = `
+
             <div class="call-top">
+
                 ${categories}
+
                 <span class="status status-${safe(call.status)}">
+
                     ${status}
+
                 </span>
+
             </div>
 
-            <h3>${safe(call.description)}</h3>
+            <h3>
+                ${safe(call.description)}
+            </h3>
 
-            <p>📍 ${safe(call.neighborhood)}</p>
+            <p>
+                📍 ${safe(call.neighborhood)}
+            </p>
 
-            <p>👤 ${safe(call.requester)}</p>
+            <p>
+                👤 ${safe(call.requester)}
+            </p>
 
-            <p>📅 ${safe(call.createdAt)}</p>
+            <p>
+                📅 ${safe(call.createdAt)}
+            </p>
 
             ${action}
+
         `;
 
         $("callsList").appendChild(card);
+
     });
 
+    // ATUALIZAR MAPA
+
     renderMarkers();
+
 }
 
 // ==========================================
-// FILTROS
+// FILTRO DE CHAMADOS
 // ==========================================
 
 $("statusFilter").addEventListener(
@@ -564,7 +804,14 @@ function acceptCall(id) {
 
     const call = calls.find(item => item.id === id);
 
-    if (!call || call.status !== "open") return;
+    if (!call || !profile) return;
+
+    if (call.status !== "open") {
+
+        alert("Este chamado não está mais disponível.");
+
+        return;
+    }
 
     if (call.requester === profile.name) {
 
@@ -573,15 +820,27 @@ function acceptCall(id) {
         return;
     }
 
+    // ATUALIZAR STATUS
+
+    const previousStatus = call.status;
+    const previousAcceptedBy = call.acceptedBy;
+
     call.status = "accepted";
 
     call.acceptedBy = profile.name;
 
-    save();
+    if (!save()) {
+
+        call.status = previousStatus;
+        call.acceptedBy = previousAcceptedBy;
+
+        return;
+    }
 
     renderCalls();
 
     alert("Obrigado por ajudar alguém de Santiago! ❤️");
+
 }
 
 // ==========================================
@@ -592,7 +851,7 @@ function updateProgress(id) {
 
     const call = calls.find(item => item.id === id);
 
-    if (!call) return;
+    if (!call || !profile) return;
 
     if (
         call.requester !== profile.name &&
@@ -613,16 +872,26 @@ function updateProgress(id) {
 
     if (progress === null || !progress.trim()) return;
 
+    const previousProgress = call.progress;
+    const previousUpdatedAt = call.updatedAt;
+
     call.progress = progress.trim();
 
     call.updatedAt =
         new Date().toLocaleString("pt-BR");
 
-    save();
+    if (!save()) {
+
+        call.progress = previousProgress;
+        call.updatedAt = previousUpdatedAt;
+
+        return;
+    }
 
     renderCalls();
 
     alert("Andamento atualizado com sucesso! ❤️");
+
 }
 
 // ==========================================
@@ -633,21 +902,40 @@ function completeCall(id) {
 
     const call = calls.find(item => item.id === id);
 
-    if (!call || call.acceptedBy !== profile.name) {
+    if (!call || !profile) return;
+
+    if (
+        call.status !== "accepted" ||
+        call.acceptedBy !== profile.name
+    ) {
+
+        alert("Você não pode concluir este chamado.");
+
         return;
     }
 
     if (!confirm("Deseja marcar este chamado como concluído?")) {
+
         return;
     }
 
+    const previousStatus = call.status;
+
     call.status = "done";
 
-    save();
+    if (!save()) {
+
+        call.status = previousStatus;
+
+        return;
+    }
 
     renderCalls();
 
-    alert("Chamado concluído! Obrigado pela solidariedade.");
+    alert(
+        "Chamado concluído! Obrigado pela solidariedade. ❤️"
+    );
+
 }
 
 // ==========================================
@@ -664,10 +952,14 @@ function renderMarkers() {
 
         if (
             !call.coordinates ||
-            !Array.isArray(call.coordinates)
+            !Array.isArray(call.coordinates) ||
+            call.coordinates.length !== 2
         ) {
+
             return;
         }
+
+        // NÃO MOSTRAR CHAMADOS CONCLUÍDOS
 
         if (call.status === "done") return;
 
@@ -679,32 +971,60 @@ function renderMarkers() {
             .map(safe)
             .join(", ");
 
+        // INFORMAÇÕES DO MARCADOR
+
         marker.bindPopup(`
-            <strong>${categories}</strong>
 
-            <p>${safe(call.description)}</p>
+            <strong>
+                ${categories}
+            </strong>
 
-            <p>📍 ${safe(call.neighborhood)}</p>
+            <p>
+                ${safe(call.description)}
+            </p>
 
-            <p>Status: ${safe(call.status)}</p>
+            <p>
+                📍 ${safe(call.neighborhood)}
+            </p>
+
+            <p>
+                Status: ${safe(call.status)}
+            </p>
+
         `);
+
     });
+
 }
 
 // ==========================================
-// INICIALIZAÇÃO
+// INICIALIZAÇÃO DO APLICATIVO
 // ==========================================
 
 if (profile) {
+
     showApp();
+
 } else {
+
     showLanding();
+
 }
 
-// DISPONIBILIZAR FUNÇÕES DOS BOTÕES
+// ==========================================
+// DISPONIBILIZAR FUNÇÕES
+// ==========================================
 
 window.acceptCall = acceptCall;
-window.completeCall = completeCall;
+
 window.updateProgress = updateProgress;
+
+window.completeCall = completeCall;
+
 window.openRegister = openRegister;
+
 window.showLanding = showLanding;
+
+// ==========================================
+// FIM DO JAVASCRIPT ❤️
+// ==========================================
