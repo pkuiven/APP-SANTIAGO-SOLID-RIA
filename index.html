@@ -298,11 +298,11 @@
         <form id="registerForm">
 
             <label>Nome completo</label>
-            <input id="personName" maxlength="60"
+            <input id="personName" maxlength="60" autocomplete="name"
             required placeholder="Seu nome">
 
             <label>Rua</label>
-            <input id="street" maxlength="100"
+            <input id="street" maxlength="100" autocomplete="street-address"
             required placeholder="Sua rua">
 
             <div class="form-grid">
@@ -322,7 +322,7 @@
             </div>
 
             <label>Telefone (opcional)</label>
-            <input id="phone" maxlength="25"
+            <input id="phone" maxlength="25" autocomplete="tel"
             placeholder="Seu telefone">
 
             <small class="privacy">
@@ -581,7 +581,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="java.script"></script>
+<script src="script.js" defer></script>
 
 </body>
 </html>
