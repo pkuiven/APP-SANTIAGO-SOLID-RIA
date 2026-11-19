@@ -1,34 +1,24 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Santiago Solidária ❤️</title>
+    <meta name="theme-color" content="#26734d">
+    <title>Santiago Solidária</title>
 
     <link rel="stylesheet" href="style.css">
-
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
 
-<!-- =========================
-     LANDING PAGE
-========================= -->
-
 <section id="landingScreen">
 
-    <!-- MENU -->
-
     <header class="landing-header">
-
         <a href="#inicio" class="brand">
-            <div class="logo">❤️</div>
-
+            <div class="logo"><i data-lucide="heart-handshake"></i></div>
             <div>
                 <h1>Santiago Solidária</h1>
                 <p>Uma cidade mais unida.</p>
@@ -38,550 +28,266 @@
         <nav class="landing-nav">
             <a href="#inicio">Início</a>
             <a href="#como-funciona">Como funciona</a>
-            <a href="#sobre">Sobre o projeto</a>
-
-            <button class="primary" id="joinBtn">
-                Fazer parte →
-            </button>
+            <a href="#sobre">Sobre</a>
+            <button class="primary" id="joinBtn">Fazer parte <i data-lucide="arrow-right"></i></button>
         </nav>
-
     </header>
 
-
-    <!-- HERO -->
-
     <main>
-
         <section class="hero" id="inicio">
-
             <div class="hero-content">
-
-                <span class="tag">
-                    ❤️ SOLIDARIEDADE QUE TRANSFORMA
-                </span>
-
-                <h2>
-                    Juntos podemos fazer de
-                    <span>Santiago</span> um lugar melhor.
-                </h2>
-
-                <p>
-                    Uma comunidade onde pessoas podem pedir ajuda,
-                    oferecer apoio e transformar pequenas atitudes
-                    em grandes gestos de solidariedade.
-                </p>
+                <span class="tag">SOLIDARIEDADE QUE TRANSFORMA</span>
+                <h2>Juntos podemos fazer de <span>Santiago</span> um lugar melhor.</h2>
+                <p>Uma comunidade onde pessoas podem pedir ajuda, oferecer apoio e transformar pequenas atitudes em grandes gestos de solidariedade.</p>
 
                 <div class="hero-buttons">
-
-                    <button class="primary" id="heroJoinBtn">
-                        Quero fazer parte →
-                    </button>
-
-                    <a href="#como-funciona" class="secondary">
-                        Conhecer o projeto
-                    </a>
-
+                    <button class="primary" id="heroJoinBtn">Quero fazer parte <i data-lucide="arrow-right"></i></button>
+                    <a href="#como-funciona" class="secondary">Conhecer o projeto</a>
                 </div>
 
                 <div class="hero-info">
-                    <span>🤝 Ajude quem precisa</span>
-                    <span>❤️ Faça a diferença</span>
+                    <span><i data-lucide="hand-heart"></i> Ajude quem precisa</span>
+                    <span><i data-lucide="users"></i> Faça a diferença</span>
                 </div>
-
             </div>
 
-
             <div class="hero-image">
-
-                <img
-                    src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1000&q=85"
-                    alt="Pessoas trabalhando juntas em uma ação solidária"
-                >
-
+                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&w=1000&q=85" alt="Pessoas em ação solidária">
                 <div class="floating-card">
-                    <span>❤️</span>
-
+                    <i data-lucide="heart-handshake"></i>
                     <div>
                         <strong>Pequenos gestos.</strong>
                         <p>Grandes transformações.</p>
                     </div>
                 </div>
-
             </div>
-
         </section>
-
-
-        <!-- COMO FUNCIONA -->
 
         <section class="how-section" id="como-funciona">
-
             <div class="section-heading">
-
                 <span class="tag">É SIMPLES PARTICIPAR</span>
-
-                <h2>
-                    A solidariedade começa com você.
-                </h2>
-
-                <p>
-                    Conectamos quem precisa de ajuda com quem
-                    pode fazer a diferença.
-                </p>
-
+                <h2>A solidariedade começa com você.</h2>
+                <p>Conectamos quem precisa de ajuda com quem pode fazer a diferença.</p>
             </div>
-
 
             <div class="steps">
-
                 <article class="step-card">
-
-                    <div class="step-icon">📝</div>
-
+                    <div class="step-icon"><i data-lucide="user-plus"></i></div>
                     <span>01</span>
-
                     <h3>Cadastre-se</h3>
-
-                    <p>
-                        Faça seu cadastro e entre para a
-                        comunidade Santiago Solidária.
-                    </p>
-
+                    <p>Faça seu cadastro e entre para a comunidade Santiago Solidária.</p>
                 </article>
 
-
                 <article class="step-card">
-
-                    <div class="step-icon">📢</div>
-
+                    <div class="step-icon"><i data-lucide="megaphone"></i></div>
                     <span>02</span>
-
                     <h3>Compartilhe ou encontre ajuda</h3>
-
-                    <p>
-                        Publique uma necessidade ou encontre
-                        pessoas que precisam de apoio.
-                    </p>
-
+                    <p>Publique uma necessidade ou encontre pessoas que precisam de apoio.</p>
                 </article>
-
 
                 <article class="step-card">
-
-                    <div class="step-icon">🤝</div>
-
+                    <div class="step-icon"><i data-lucide="hand-heart"></i></div>
                     <span>03</span>
-
                     <h3>Faça a diferença</h3>
-
-                    <p>
-                        Conecte-se com a comunidade e transforme
-                        solidariedade em ação.
-                    </p>
-
+                    <p>Conecte-se com a comunidade e transforme solidariedade em ação.</p>
                 </article>
-
             </div>
-
         </section>
-
-
-        <!-- SOBRE -->
 
         <section class="about-section" id="sobre">
-
             <div class="about-image">
-
-                <img
-                    src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1000&q=85"
-                    alt="Grupo de voluntários em ação comunitária"
-                >
-
+                <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=1000&q=85" alt="Voluntários em ação">
             </div>
-
 
             <div class="about-content">
-
                 <span class="tag">NOSSO PROPÓSITO</span>
-
-                <h2>
-                    Uma cidade mais unida começa com pessoas que se importam.
-                </h2>
-
-                <p>
-                    O Santiago Solidária nasceu com o propósito
-                    de aproximar pessoas, facilitar a comunicação
-                    e incentivar ações de ajuda dentro da nossa cidade.
-                </p>
-
-                <p>
-                    Queremos criar uma rede de apoio onde cada
-                    pessoa possa contribuir da maneira que conseguir.
-                </p>
-
-                <button class="primary" id="aboutJoinBtn">
-                    Participar da comunidade →
-                </button>
-
+                <h2>Uma cidade mais unida começa com pessoas que se importam.</h2>
+                <p>O Santiago Solidária nasceu com o propósito de aproximar pessoas, facilitar a comunicação e incentivar ações de ajuda dentro da nossa cidade.</p>
+                <p>Queremos criar uma rede de apoio onde cada pessoa possa contribuir da maneira que conseguir.</p>
+                <button class="primary" id="aboutJoinBtn">Participar da comunidade <i data-lucide="arrow-right"></i></button>
             </div>
-
         </section>
-
-
-        <!-- CHAMADA FINAL -->
 
         <section class="cta-section">
-
-            <span>❤️</span>
-
-            <h2>
-                Você também pode fazer parte dessa transformação.
-            </h2>
-
-            <p>
-                Entre para a comunidade e ajude a construir
-                uma Santiago mais solidária.
-            </p>
-
-            <button class="cta-button" id="finalJoinBtn">
-                Quero participar →
-            </button>
-
+            <i data-lucide="heart-handshake"></i>
+            <h2>Você também pode fazer parte dessa transformação.</h2>
+            <p>Entre para a comunidade e ajude a construir uma Santiago mais solidária.</p>
+            <button class="cta-button" id="finalJoinBtn">Quero participar <i data-lucide="arrow-right"></i></button>
         </section>
-
     </main>
-
 </section>
-
-
-<!-- =========================
-     CADASTRO
-========================= -->
 
 <section id="registerScreen" class="register hidden">
-
     <div class="register-box">
-
-        <button type="button" id="backLandingBtn" class="secondary">
-            ← Voltar ao início
-        </button>
+        <button type="button" id="backLandingBtn" class="secondary"><i data-lucide="arrow-left"></i> Voltar ao início</button>
 
         <span class="tag">FAÇA PARTE DA COMUNIDADE</span>
-
         <h2>Bem-vindo à Santiago Solidária!</h2>
-
         <p>Conectando pessoas e compartilhando esperança.</p>
 
-
         <div class="photo-upload">
-
             <label for="profilePhoto">
-
-                <img
-                    id="photoPreview"
-                    src="https://placehold.co/120x120/e8f3ed/26734d?text=Foto"
-                    alt="Foto de perfil"
-                >
-
-                <span>+</span>
-
+                <img id="photoPreview" src="https://placehold.co/120x120/e8f3ed/26734d?text=Foto" alt="Foto de perfil">
+                <span><i data-lucide="plus"></i></span>
             </label>
-
-            <input type="file" id="profilePhoto"
-            accept="image/*" hidden>
-
+            <input type="file" id="profilePhoto" accept="image/*" hidden>
             <small>Foto de perfil opcional</small>
-
         </div>
 
-
         <form id="registerForm">
+            <label for="personName">Nome completo</label>
+            <input id="personName" maxlength="60" autocomplete="name" required placeholder="Seu nome">
 
-            <label>Nome completo</label>
-            <input id="personName" maxlength="60" autocomplete="name"
-            required placeholder="Seu nome">
-
-            <label>Rua</label>
-            <input id="street" maxlength="100" autocomplete="street-address"
-            required placeholder="Sua rua">
+            <label for="street">Rua</label>
+            <input id="street" maxlength="100" autocomplete="street-address" required placeholder="Sua rua">
 
             <div class="form-grid">
-
                 <div>
-                    <label>Bairro</label>
-                    <input id="neighborhood" maxlength="80"
-                    required placeholder="Seu bairro">
+                    <label for="neighborhood">Bairro</label>
+                    <input id="neighborhood" maxlength="80" required placeholder="Seu bairro">
                 </div>
-
                 <div>
-                    <label>Número</label>
-                    <input id="houseNumber" maxlength="12"
-                    required placeholder="Número">
+                    <label for="houseNumber">Número</label>
+                    <input id="houseNumber" maxlength="12" required placeholder="Número">
                 </div>
-
             </div>
 
-            <label>Telefone (opcional)</label>
-            <input id="phone" maxlength="25" autocomplete="tel"
-            placeholder="Seu telefone">
+            <label for="phone">Telefone (opcional)</label>
+            <input id="phone" maxlength="25" autocomplete="tel" placeholder="Seu telefone">
 
-            <small class="privacy">
-                Seus dados pessoais não serão exibidos publicamente.
-                Este protótipo salva informações somente neste navegador.
-            </small>
-
-            <button class="primary" type="submit">
-                ENTRAR NA COMUNIDADE →
-            </button>
-
+            <small class="privacy">Este é um protótipo local. Não compartilhe seu endereço residencial ou telefone publicamente.</small>
+            <button class="primary full" type="submit">Entrar na comunidade <i data-lucide="arrow-right"></i></button>
         </form>
-
     </div>
-
 </section>
-
-
-<!-- =========================
-     APLICATIVO
-========================= -->
 
 <section id="appScreen" class="hidden">
 
     <div class="welcome">
-
         <div>
             <span class="tag">SUA COMUNIDADE</span>
-
-            <h2>
-                Olá, <span id="welcomeName"></span>!
-            </h2>
-
+            <h2>Olá, <span id="welcomeName"></span>!</h2>
             <p>Juntos podemos transformar vidas.</p>
         </div>
 
         <div class="profile">
-
             <img id="userPhoto" src="" alt="Perfil">
-
-            <button id="editProfileBtn" class="secondary">
-                Meu perfil
-            </button>
-
+            <button id="editProfileBtn" class="secondary"><i data-lucide="user-round"></i> Meu perfil</button>
         </div>
-
     </div>
 
-
-    <!-- ESTATÍSTICAS -->
-
     <div class="stats">
-
         <div class="stat">
-            <span>📢</span>
+            <div class="stat-icon"><i data-lucide="megaphone"></i></div>
             <strong id="openCount">0</strong>
             <p>Abertos</p>
         </div>
-
         <div class="stat">
-            <span>🤝</span>
+            <div class="stat-icon blue"><i data-lucide="handshake"></i></div>
             <strong id="acceptedCount">0</strong>
             <p>Em atendimento</p>
         </div>
-
         <div class="stat">
-            <span>❤️</span>
+            <div class="stat-icon gold"><i data-lucide="check-circle"></i></div>
             <strong id="doneCount">0</strong>
             <p>Concluídos</p>
         </div>
-
     </div>
 
-
-    <!-- NOVO CHAMADO -->
-
     <section class="panel">
-
-        <span class="tag">PRECISA DE AJUDA?</span>
-
-        <h2>Publicar um chamado</h2>
-
-        <p>Selecione tudo aquilo de que você precisa.</p>
+        <div class="panel-heading">
+            <div class="panel-icon"><i data-lucide="plus-circle"></i></div>
+            <div>
+                <span class="tag">PRECISA DE AJUDA?</span>
+                <h2>Publicar um chamado</h2>
+                <p>Selecione as categorias e explique sua necessidade.</p>
+            </div>
+        </div>
 
         <form id="callForm">
-
             <label>Categorias</label>
 
             <div class="categories">
-
-                <label>
-                    <input type="checkbox" name="category" value="Alimentos">
-                    🍎 Alimentos
-                </label>
-
-                <label>
-                    <input type="checkbox" name="category" value="Roupas">
-                    👕 Roupas
-                </label>
-
-                <label>
-                    <input type="checkbox" name="category" value="Transporte">
-                    🚗 Transporte
-                </label>
-
-                <label>
-                    <input type="checkbox" name="category" value="Medicamentos">
-                    💊 Medicamentos
-                </label>
-
-                <label>
-                    <input type="checkbox" name="category" value="Doações">
-                    🎁 Doações
-                </label>
-
-                <label>
-                    <input type="checkbox" name="category" value="Outros">
-                    ❤️ Outros
-                </label>
-
+                <label class="category-option"><input type="checkbox" name="category" value="Alimentos"><i data-lucide="apple"></i><span>Alimentos</span></label>
+                <label class="category-option"><input type="checkbox" name="category" value="Roupas"><i data-lucide="shirt"></i><span>Roupas</span></label>
+                <label class="category-option"><input type="checkbox" name="category" value="Transporte"><i data-lucide="car"></i><span>Transporte</span></label>
+                <label class="category-option"><input type="checkbox" name="category" value="Medicamentos"><i data-lucide="pill"></i><span>Medicamentos</span></label>
+                <label class="category-option"><input type="checkbox" name="category" value="Doações"><i data-lucide="gift"></i><span>Doações</span></label>
+                <label class="category-option"><input type="checkbox" name="category" value="Outros"><i data-lucide="hand-heart"></i><span>Outros</span></label>
             </div>
 
-            <label>Descreva sua necessidade</label>
+            <label for="callDescription">Descreva sua necessidade</label>
+            <textarea id="callDescription" maxlength="240" required placeholder="Conte como podemos ajudar..."></textarea>
 
-            <textarea id="callDescription" maxlength="240"
-            required placeholder="Conte como podemos ajudar..."></textarea>
-
-            <label>Bairro</label>
-
-            <input id="callNeighborhood" required maxlength="80"
-            placeholder="Bairro onde precisa de ajuda">
+            <label for="callNeighborhood">Bairro</label>
+            <input id="callNeighborhood" required maxlength="80" placeholder="Bairro onde precisa de ajuda">
 
             <div class="location-box">
-
-                <h3>📍 Localização no mapa</h3>
-
-                <p>
-                    Marque um ponto público próximo de onde precisa de ajuda.
-                </p>
-
-                <button type="button" id="selectLocation" class="secondary">
-                    Escolher localização
-                </button>
-
-                <p id="locationStatus">
-                    Nenhum local selecionado.
-                </p>
-
+                <div class="location-heading">
+                    <i data-lucide="map-pin"></i>
+                    <div>
+                        <h3>Localização no mapa</h3>
+                        <p>Marque um ponto público próximo, sem indicar sua residência.</p>
+                    </div>
+                </div>
+                <button type="button" id="selectLocation" class="secondary"><i data-lucide="map"></i> Escolher localização</button>
+                <p id="locationStatus">Nenhum local selecionado.</p>
             </div>
 
-            <button class="primary" type="submit">
-                PUBLICAR CHAMADO +
-            </button>
-
+            <button class="primary full" type="submit">Publicar chamado <i data-lucide="send"></i></button>
         </form>
-
     </section>
 
-
-    <!-- MAPA -->
-
     <section class="panel">
-
-        <span class="tag">LOCALIZAÇÃO</span>
-
-        <h2>Mapa de Santiago</h2>
-
-        <p>Visualize os pontos de referência dos chamados.</p>
-
+        <div class="panel-heading">
+            <div class="panel-icon"><i data-lucide="map"></i></div>
+            <div>
+                <span class="tag">LOCALIZAÇÃO</span>
+                <h2>Mapa de Santiago</h2>
+                <p>Visualize os pontos de referência dos chamados.</p>
+            </div>
+        </div>
         <div id="map"></div>
-
-        <small class="map-credit">
-            Mapa © OpenStreetMap contributors.
-        </small>
-
+        <small class="map-credit">Mapa © OpenStreetMap contributors.</small>
     </section>
 
-
-    <!-- LISTA DE CHAMADOS -->
-
     <section class="panel">
-
         <div class="list-heading">
-
             <div>
                 <span class="tag">SOLIDARIEDADE EM AÇÃO</span>
                 <h2>Pedidos da comunidade</h2>
+                <p>Acompanhe os pedidos e veja onde pode ajudar.</p>
             </div>
-
-            <select id="statusFilter">
-
-                <option value="all">Todos</option>
+            <select id="statusFilter" aria-label="Filtrar chamados">
+                <option value="all">Todos os chamados</option>
                 <option value="open">Abertos</option>
                 <option value="accepted">Em atendimento</option>
                 <option value="done">Concluídos</option>
-
             </select>
-
         </div>
-
         <div id="callsList" class="calls-list"></div>
-
     </section>
 
-
-    <button id="logoutBtn" class="logout">
-        Sair da conta
-    </button>
-
+    <button id="logoutBtn" class="logout"><i data-lucide="log-out"></i> Sair da conta</button>
 </section>
 
-
-<!-- =========================
-     RODAPÉ
-========================= -->
-
 <footer>
-
-    <h2>❤️ Santiago Solidária</h2>
-
+    <h2><i data-lucide="heart-handshake"></i> Santiago Solidária</h2>
     <p>Pequenas atitudes. Uma cidade mais unida.</p>
 
     <div class="emergency">
-
-        <h3>📞 Telefones de emergência</h3>
-
+        <h3>Telefones de emergência</h3>
         <div class="emergency-grid">
-
-            <a href="tel:190">
-                🚔 Polícia Militar
-                <strong>190</strong>
-            </a>
-
-            <a href="tel:192">
-                🚑 SAMU
-                <strong>192</strong>
-            </a>
-
-            <a href="tel:193">
-                🚒 Bombeiros
-                <strong>193</strong>
-            </a>
-
+            <a href="tel:190"><i data-lucide="shield"></i><span>Polícia Militar</span><strong>190</strong></a>
+            <a href="tel:192"><i data-lucide="ambulance"></i><span>SAMU</span><strong>192</strong></a>
+            <a href="tel:193"><i data-lucide="flame"></i><span>Bombeiros</span><strong>193</strong></a>
         </div>
-
     </div>
 
-    <small>
-        Projeto Santiago Solidária • Santiago - RS
-    </small>
-
+    <small>Projeto Santiago Solidária • Santiago - RS</small>
 </footer>
 
-
-<!-- SCRIPTS -->
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script src="script.js" defer></script>
-
 </body>
 </html>
